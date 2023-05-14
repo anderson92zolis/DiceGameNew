@@ -1,0 +1,237 @@
+{
+	"info": {
+		"_postman_id": "0772c7d7-b082-4f5d-a8fd-799bfcd7ca25",
+		"name": "DiceGame",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26628613"
+	},
+	"item": [
+		{
+			"name": "http://localhost:9003/players",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhIiwiaWF0IjoxNjgzODE3MTQ4LCJleHAiOjE2ODM4MTg1ODh9.ipzDzM0MGdGhmo8CinzIbFlr_V54-dNWFWmaVtDAh8w",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"abc\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{server}}:{{port}}/players",
+					"host": [
+						"{{server}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"players"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:9003/players/{}",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"doblec\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{server}}:{{port}}/players/645a1ee0aab7fe4c5e08bdae",
+					"host": [
+						"{{server}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"players",
+						"645a1ee0aab7fe4c5e08bdae"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST /players/{id}/games/",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{server}}:{{port}}/players/645a1ee0aab7fe4c5e08bdae/games/",
+					"host": [
+						"{{server}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"players",
+						"645a1ee0aab7fe4c5e08bdae",
+						"games",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/players/{id}/games",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{server}}:{{port}}/players/645a215cca9bf424d5a896f7/games",
+					"host": [
+						"{{server}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"players",
+						"645a215cca9bf424d5a896f7",
+						"games"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:9003/diceGame/delete/{}",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{server}}:{{port}}/players/delete/645d031eb9b7897d82744be7",
+					"host": [
+						"{{server}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"players",
+						"delete",
+						"645d031eb9b7897d82744be7"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:9003/players/getAllPlayers",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{server}}:{{port}}/players/",
+					"host": [
+						"{{server}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"players",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:9003/players/{id}/games",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{server}}:{{port}}/players/645a1ee0aab7fe4c5e08bdae/games",
+					"host": [
+						"{{server}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"players",
+						"645a1ee0aab7fe4c5e08bdae",
+						"games"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:9003/players/ranking",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{server}}:{{port}}/players/ranking",
+					"host": [
+						"{{server}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"players",
+						"ranking"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:9003/players/ranking/loser",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{server}}:{{port}}/players/ranking/loser",
+					"host": [
+						"{{server}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"players",
+						"ranking",
+						"loser"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:9003/players/ranking/winner",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{server}}:{{port}}/players/ranking/winner",
+					"host": [
+						"{{server}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"players",
+						"ranking",
+						"winner"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
