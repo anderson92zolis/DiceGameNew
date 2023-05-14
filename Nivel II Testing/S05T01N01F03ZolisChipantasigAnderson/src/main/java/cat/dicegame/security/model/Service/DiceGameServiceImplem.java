@@ -378,6 +378,7 @@ public class DiceGameServiceImplem implements PlayerInterface, RollInterface {
      */
     public List<PlayerDto> convertListOfPlayerToListOfPLayerDTO() {
 
+
         List<Player> listPlayer = playerRepository.findAll();
 
         if (listPlayer.isEmpty()) {

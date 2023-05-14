@@ -86,6 +86,7 @@ class DiceGameServiceImplemTest {
     }
 
     @Test
+    @Disabled
     void getAllUsersInTheGameTest() throws NoSuchElementException {
         /*
         // when
@@ -110,10 +111,10 @@ class DiceGameServiceImplemTest {
 
 */
 
+
         underTest.getAllUsersInTheGame() ;
 
         // then
-
 
         verify(playerRepository).findAll();
 

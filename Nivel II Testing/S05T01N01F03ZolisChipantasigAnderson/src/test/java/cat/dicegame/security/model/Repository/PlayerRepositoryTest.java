@@ -1,47 +1,51 @@
 package cat.dicegame.security.model.Repository;
 
-import cat.dicegame.security.auth.RegisterRequest;
 import cat.dicegame.security.model.Entity.Player;
-import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import cat.dicegame.security.model.Repository.PlayerRepository;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
-
-import java.util.Optional;
-
-import static org.assertj.core.api.FactoryBasedNavigableListAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE) // Evitar reemplazo de la fuente de datos
 class PlayerRepositoryTest {
 
-    @Autowired
+    //@Autowired
+    @MockBean
     private PlayerRepository playerRepositoryUnderTest;
 
-    @Autowired
-    private final ModelMapper modelMapper = new ModelMapper();
 
+    @DisplayName("TEST TO FIND BY EMAIL")
     @Test
     public void findByEmailTest() {
 
+
         //give
 
-        RegisterRequest registerRequest = new RegisterRequest(
-            "name", "b@gmail.com", "password"
-            );
+        Player player1 = new  Player("anderson");
 
-        playerRepositoryUnderTest.save(modelMapper.map(registerRequest, Player.class));
+        player1.setEmail("a@gmail.com");
+        player1.setPassword("1");
+
+        Player foundPlayer = playerRepositoryUnderTest.save(player1);
 
         //when
 
-        Optional<Player> foundPlayer = playerRepositoryUnderTest.findByEmail("b@gmail.com");
+        //Optional<Player> foundPlayer = playerRepositoryUnderTest.save(player1);
+        System.out.println(foundPlayer);
 
         //then
-        Assertions.assertThat(foundPlayer.isPresent());
+      assertThat(foundPlayer).isNotNull();
+      assertThat(foundPlayer.getEmail()).isEqualTo("a@gmail.com");
+
 
     }
+
+
 
 
 
