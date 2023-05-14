@@ -59,11 +59,11 @@ public class AuthenticationService {
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getName(),
+                        request.getEmail(),
                         request.getPassword()
                 )
         );
-        var user = playerRepository.findByName(request.getName())
+        var user = playerRepository.findByEmail(request.getEmail())
                 .orElseThrow();
 
         var jwtToken = jwtService.generateToken(user);

@@ -41,11 +41,6 @@ dependencies {
 	testImplementation("org.mockito:mockito-core:4.6.1")
 
 
-	/*
-        implementation("io.jsonwebtoken.jjwt-api:0.9.1")
-        implementation("io.jsonwebtoken.jjwt-impl:0.9.1")
-        implementation("io.jsonwebtoken.jjwt-jackson:0.9.1")
-        */
 
 	//ModelMapper
 	//https://mvnrepository.com/artifact/org.modelmapper/modelmapper/3.1.1

@@ -16,7 +16,6 @@ import java.util.List;
 @AllArgsConstructor
 public class PlayerDto {
 
-
     private ObjectId id;
 
     private String name;

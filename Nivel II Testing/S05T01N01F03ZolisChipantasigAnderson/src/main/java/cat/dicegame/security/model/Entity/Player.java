@@ -68,7 +68,7 @@ public class Player implements UserDetails {
 
     @Override
     public String getUsername() {
-        return name;
+        return email;
     }
 
     @Override

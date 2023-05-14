@@ -10,7 +10,7 @@ import cat.dicegame.security.model.Entity.Roll;
 import cat.dicegame.security.model.Exceptions.NameRepetitiveException;
 import cat.dicegame.security.model.Exceptions.ResourceNotFoundException;
 import cat.dicegame.security.model.Repository.PlayerRepository;
-import cat.dicegame.security.model.Service.AleatoryDiceMethod.extraMethodsForRoller;
+import cat.dicegame.security.model.Service.AleatoryDiceMethod.ExtraMethodsForRoller;
 import org.bson.types.ObjectId;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,9 +115,9 @@ public class DiceGameServiceImplem implements PlayerInterface, RollInterface {
 
         Roll roll = new Roll();
 
-        roll.setDice1(extraMethodsForRoller.randomNumbers());
-        roll.setDice2(extraMethodsForRoller.randomNumbers());
-        roll.setResult(extraMethodsForRoller.returnWinnerLost(roll.getDice1(), roll.getDice2()));
+        roll.setDice1(ExtraMethodsForRoller.randomNumbers());
+        roll.setDice2(ExtraMethodsForRoller.randomNumbers());
+        roll.setResult(ExtraMethodsForRoller.returnWinnerLost(roll.getDice1(), roll.getDice2()));
         roll.setLocalDateTime(new Date());
 
         player.addRolls(roll);

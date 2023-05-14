@@ -29,8 +29,6 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-
-
     public AuthenticationResponse register(RegisterRequest request) {
 
 
@@ -59,11 +57,11 @@ public class AuthenticationService {
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getName(),
+                        request.getEmail(),
                         request.getPassword()
                 )
         );
-        var user = playerRepository.findByName(request.getName())
+        var user = playerRepository.findByEmail(request.getEmail())
                 .orElseThrow();
 
         var jwtToken = jwtService.generateToken(user);
