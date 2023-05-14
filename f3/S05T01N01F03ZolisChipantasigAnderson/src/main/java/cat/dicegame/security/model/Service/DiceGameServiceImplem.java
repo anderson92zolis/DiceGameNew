@@ -10,7 +10,7 @@ import cat.dicegame.security.model.Entity.Roll;
 import cat.dicegame.security.model.Exceptions.NameRepetitiveException;
 import cat.dicegame.security.model.Exceptions.ResourceNotFoundException;
 import cat.dicegame.security.model.Repository.PlayerRepository;
-import cat.dicegame.security.model.Service.funtions.extraMethodsForRoller;
+import cat.dicegame.security.model.Service.AleatoryDiceMethod.extraMethodsForRoller;
 import org.bson.types.ObjectId;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

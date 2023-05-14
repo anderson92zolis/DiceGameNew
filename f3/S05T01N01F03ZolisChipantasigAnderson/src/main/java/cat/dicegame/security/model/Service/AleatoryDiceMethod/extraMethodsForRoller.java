@@ -1,4 +1,4 @@
-package cat.dicegame.security.model.Service.funtions;
+package cat.dicegame.security.model.Service.AleatoryDiceMethod;
 
 public class extraMethodsForRoller {
 
