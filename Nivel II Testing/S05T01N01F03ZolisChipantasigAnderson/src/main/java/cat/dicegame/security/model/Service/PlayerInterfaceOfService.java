@@ -11,7 +11,7 @@ import org.bson.types.ObjectId;
 
 import java.util.List;
 
-public interface PlayerInterface {
+public interface PlayerInterfaceOfService {
 
 
     PlayerDto createPlayer(PlayerDto diceGameDto);

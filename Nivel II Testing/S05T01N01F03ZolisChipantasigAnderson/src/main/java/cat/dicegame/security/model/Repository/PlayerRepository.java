@@ -13,5 +13,4 @@ public interface PlayerRepository extends MongoRepository<Player, ObjectId> {
 
     Optional<Player> findByEmail(String email);
 
-
 }

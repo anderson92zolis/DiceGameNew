@@ -20,7 +20,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class DiceGameServiceImplem implements PlayerInterface, RollInterface {
+public class DiceGameServiceImplem implements PlayerInterfaceOfService, RollInterface {
 
     @Autowired
     private final ModelMapper modelMapper = new ModelMapper();

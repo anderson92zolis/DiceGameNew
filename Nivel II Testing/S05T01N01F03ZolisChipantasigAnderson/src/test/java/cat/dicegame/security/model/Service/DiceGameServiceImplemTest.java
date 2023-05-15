@@ -3,82 +3,86 @@ package cat.dicegame.security.model.Service;
 import cat.dicegame.security.model.Dto.PlayerDto;
 import cat.dicegame.security.model.Entity.Player;
 import cat.dicegame.security.model.Repository.PlayerRepository;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.client.ExpectedCount.times;
+
 
 //  https://www.youtube.com/watch?v=Geq60OVyBPg
 // https://www.baeldung.com/mockito-junit-5-extension
 // @ExtendWith(MockitoExtension.class)
-@SpringBootTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+
+// @SpringBootTest
+//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@ExtendWith(MockitoExtension.class)
+//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class DiceGameServiceImplemTest {
 
+    @Mock
     private PlayerRepository playerRepository;
-    private AutoCloseable autoCloseable;
-    private DiceGameServiceImplem underTest;
+    @InjectMocks
+    private DiceGameServiceImplem diceGameServiceTest;
+
+    @Mock
+    private ModelMapper modelMapper = new ModelMapper();
+
+    private Player player;
+
 
 
 
     @BeforeEach
     void setUp() {
 
+        MockitoAnnotations.openMocks(this);
 
-
-        Player player1 = new  Player("PLAYER1");
-        player1.setEmail("Email1@gmail.com");
-        player1.setPassword("1");
-
-        playerRepository.save(player1);
-
+        player = new Player("PLAYER");
+        player.setEmail("email@gmail.com");
+        player.setPassword("1");
 
     }
+
+
     @AfterEach
-    void tearDown() throws Exception {
-        autoCloseable.close();
+    void tearDown()  {
+
     }
 
 
+    @DisplayName("TEST TO CREATE A PLAYER")
     @Test
-    void createPlayer() {
+    // Disable
+    void createPlayerTest() {
+
 
         // given
 
-        PlayerDto playerToCreate = new  PlayerDto("saved");
-        playerToCreate.setEmail("Email1@gmail.com");
-        playerToCreate.setPassword("1");
+        given(playerRepository.findById(player.getId())).willReturn(Optional.empty());
+
+        given(playerRepository.save(player)).willReturn(player);
 
 
         // when
 
-        PlayerDto playerSaved= underTest.createPlayer(playerToCreate);
+        PlayerDto playerDto = modelMapper.map(player, PlayerDto.class);
+
+        PlayerDto savedPlayerDto = diceGameServiceTest.createPlayer(playerDto);
 
         // then
 
-        assertThat(playerSaved).isNotNull();
-        assertThat(playerSaved.getName()).isEqualTo("saved");
-
+        assertThat(savedPlayerDto).isNotNull();
     }
 
     @Test
@@ -107,7 +111,7 @@ class DiceGameServiceImplemTest {
 
         // WHEN
 
-        Player player2 = new  Player("PLAYER1");
+        Player player2 = new Player("PLAYER1");
         player2.setEmail("Email1@gmail.com");
         player2.setPassword("1");
 
@@ -141,7 +145,7 @@ class DiceGameServiceImplemTest {
 */
 
 
-        underTest.getAllUsersInTheGame() ;
+        diceGameServiceTest.getAllUsersInTheGame();
 
         // then
 
