@@ -16,11 +16,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -28,12 +30,12 @@ import static org.springframework.test.web.client.ExpectedCount.times;
 
 //  https://www.youtube.com/watch?v=Geq60OVyBPg
 // https://www.baeldung.com/mockito-junit-5-extension
-@ExtendWith(MockitoExtension.class)
+// @ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class DiceGameServiceImplemTest {
 
-    @Mock
     private PlayerRepository playerRepository;
-    private ModelMapper mapper;
     private AutoCloseable autoCloseable;
     private DiceGameServiceImplem underTest;
 
@@ -41,8 +43,15 @@ class DiceGameServiceImplemTest {
 
     @BeforeEach
     void setUp() {
-        autoCloseable=MockitoAnnotations.openMocks(this);
-        underTest = new DiceGameServiceImplem(playerRepository);
+
+
+
+        Player player1 = new  Player("PLAYER1");
+        player1.setEmail("Email1@gmail.com");
+        player1.setPassword("1");
+
+        playerRepository.save(player1);
+
 
     }
     @AfterEach
@@ -50,19 +59,26 @@ class DiceGameServiceImplemTest {
         autoCloseable.close();
     }
 
-    @Test
-    @Disabled
-    void convertPlayerEntitytoDTO() {
-    }
 
     @Test
-    @Disabled
-    void convertPlayerDTOtoEntity() {
-    }
-
-    @Test
-    @Disabled
     void createPlayer() {
+
+        // given
+
+        PlayerDto playerToCreate = new  PlayerDto("saved");
+        playerToCreate.setEmail("Email1@gmail.com");
+        playerToCreate.setPassword("1");
+
+
+        // when
+
+        PlayerDto playerSaved= underTest.createPlayer(playerToCreate);
+
+        // then
+
+        assertThat(playerSaved).isNotNull();
+        assertThat(playerSaved.getName()).isEqualTo("saved");
+
     }
 
     @Test
@@ -88,6 +104,19 @@ class DiceGameServiceImplemTest {
     @Test
     @Disabled
     void getAllUsersInTheGameTest() throws NoSuchElementException {
+
+        // WHEN
+
+        Player player2 = new  Player("PLAYER1");
+        player2.setEmail("Email1@gmail.com");
+        player2.setPassword("1");
+
+        playerRepository.save(player2);
+
+        // when
+
+
+
         /*
         // when
 

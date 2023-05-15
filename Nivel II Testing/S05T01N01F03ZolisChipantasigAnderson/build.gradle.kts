@@ -42,9 +42,6 @@ dependencies {
 
 	// https://www.baeldung.com/mockito-junit-5-extension
 
-	//testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.2")
-	//testImplementation("org.mockito:mockito-core:4.6.1")
-
 	// JUnit 5 dependencies
 	testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.2")
 	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
