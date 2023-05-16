@@ -7,7 +7,7 @@ import cat.dicegame.security.model.Dto.RankingDto;
 import cat.dicegame.security.model.Exceptions.NameRepetitiveException;
 import cat.dicegame.security.model.Exceptions.ResourceNotFoundException;
 import cat.dicegame.security.model.Message.Message;
-import cat.dicegame.security.model.Service.DiceGameServiceImplem;
+import cat.dicegame.security.model.Service.PlayerServiceImp;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,13 +21,13 @@ import java.util.NoSuchElementException;
 @RequestMapping("/api/v1/players")
 public class DiceGameController {
 
-    private final DiceGameServiceImplem diceGameServiceImplem;
+    private final PlayerServiceImp playerServiceImp;
 
 
     @Autowired
-    public DiceGameController(DiceGameServiceImplem diceGameServiceImplem) {
+    public DiceGameController(PlayerServiceImp playerServiceImp) {
         super();
-        this.diceGameServiceImplem = diceGameServiceImplem;
+        this.playerServiceImp = playerServiceImp;
     }
 
 
@@ -48,10 +48,10 @@ public class DiceGameController {
 
         PlayerDto diceGameDtoResponse = null;
         HttpStatus httpStatus;
-        if (diceGameServiceImplem.verifyPlayerName(playerDtoRequest.getName())) {
+        if (playerServiceImp.verifyPlayerName(playerDtoRequest.getName())) {
             return new ResponseEntity(new Message("PLAYER ALREADY EXISTS WITH NAME: " + playerDtoRequest.getName()), HttpStatus.OK);
         } else {
-            diceGameDtoResponse = diceGameServiceImplem.createPlayer(playerDtoRequest);
+            diceGameDtoResponse = playerServiceImp.createPlayer(playerDtoRequest);
             httpStatus = HttpStatus.CREATED;
         }
 
@@ -80,7 +80,7 @@ public class DiceGameController {
     public ResponseEntity<PlayerDto> updatePlayer(@PathVariable ObjectId id, @RequestBody PlayerDto playerDtoRequest) {
 
         try {
-            PlayerDto playerDtoResponse = diceGameServiceImplem.updatePlayer(id, playerDtoRequest);
+            PlayerDto playerDtoResponse = playerServiceImp.updatePlayer(id, playerDtoRequest);
             return ResponseEntity.ok().body(playerDtoResponse);
         } catch (NameRepetitiveException ex) {
             return new ResponseEntity(new Message(ex.getMessage()), HttpStatus.NOT_FOUND);
@@ -106,7 +106,7 @@ public class DiceGameController {
     public ResponseEntity<PlayerDto> createRolls(@PathVariable(name = "id") ObjectId id) {
 
         try {
-            PlayerDto diceGameDtoResponse = diceGameServiceImplem.createRoll(id);
+            PlayerDto diceGameDtoResponse = playerServiceImp.createRoll(id);
             return ResponseEntity.ok().body(diceGameDtoResponse);
         } catch (ResourceNotFoundException e) {
             return new ResponseEntity(new Message("THERE IS NOT THE PLAYER " + id), HttpStatus.NOT_FOUND);
@@ -126,7 +126,7 @@ public class DiceGameController {
     public ResponseEntity<Message> deleteRollsofAPlayer(@PathVariable(name = "id") ObjectId id) {
 
         try {
-            diceGameServiceImplem.deleteRollsofAPlayer(id);
+            playerServiceImp.deleteRollsofAPlayer(id);
             return ResponseEntity.ok().body(new Message("ALL ROLLS WERE DELETED FOR PLAYER WITH ID: " + id));
         } catch (ResourceNotFoundException ex) {
             return new ResponseEntity(new Message(ex.getMessage()), HttpStatus.NOT_FOUND);
@@ -147,9 +147,9 @@ public class DiceGameController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<PlayerDto> deletePost(@PathVariable(name = "id") ObjectId id) throws ResourceNotFoundException {
 
-        if (diceGameServiceImplem.exitsById(id)) {
-            PlayerDto deletedDiceGameDto = diceGameServiceImplem.getPlayerDtoByIdWithOverage(id);
-            diceGameServiceImplem.deleteUser(id);
+        if (playerServiceImp.exitsById(id)) {
+            PlayerDto deletedDiceGameDto = playerServiceImp.getPlayerDtoByIdWithOverage(id);
+            playerServiceImp.deleteUser(id);
             return new ResponseEntity(new Message("PLAYER DELETED BY ID: " + id + " WITH NAME " + deletedDiceGameDto.getName()), HttpStatus.OK);
         } else {
             return new ResponseEntity(new Message("THERE IS NOT THE PLAYER " + id), HttpStatus.NOT_FOUND);
@@ -171,7 +171,7 @@ public class DiceGameController {
     public ResponseEntity<?> getAllPlayers() {
 
         try {
-            List<PlayerDto> listPlayerDto = diceGameServiceImplem.getAllUsersInTheGame();
+            List<PlayerDto> listPlayerDto = playerServiceImp.getAllUsersInTheGame();
 
             return new ResponseEntity<>(listPlayerDto, HttpStatus.OK);
         } catch (NoSuchElementException e) {
@@ -194,8 +194,8 @@ public class DiceGameController {
      */
     @GetMapping("/{id}/games")
     public ResponseEntity<PlayerDto> getPlayerById(@PathVariable(name = "id") ObjectId id) throws ResourceNotFoundException {
-        if (diceGameServiceImplem.exitsById(id)) {
-            PlayerDto playerDto = diceGameServiceImplem.getPlayerDtoByIdWithOverage(id);
+        if (playerServiceImp.exitsById(id)) {
+            PlayerDto playerDto = playerServiceImp.getPlayerDtoByIdWithOverage(id);
             return new ResponseEntity<>(playerDto, HttpStatus.OK);
         } else {
             return new ResponseEntity(new Message("NOT FOUND ID : " + id), HttpStatus.NOT_FOUND);
@@ -215,8 +215,8 @@ public class DiceGameController {
     public ResponseEntity<?> getOverageRankingOfAllPlayer() {
 
         try {
-            List<PlayerDto> diceGameDtos = diceGameServiceImplem.getAllUsersInTheGame();
-            RankingDto rankingDto = diceGameServiceImplem.getOveragesRankingOfAllPlayer();
+            List<PlayerDto> diceGameDtos = playerServiceImp.getAllUsersInTheGame();
+            RankingDto rankingDto = playerServiceImp.getOveragesRankingOfAllPlayer();
             if (diceGameDtos.isEmpty()) {
                 return new ResponseEntity<>(new Message("THE IS NOT PLAYERS IN DE GAME"), HttpStatus.NO_CONTENT);
             }
@@ -241,7 +241,7 @@ public class DiceGameController {
     public ResponseEntity<?> getWorstLoserRate() {
 
         try {
-            PlayerDto minPDto = diceGameServiceImplem.getPlayerWithTheWorstLossRate().getPlayerWithTheWorstLossPorcentage();
+            PlayerDto minPDto = playerServiceImp.getPlayerWithTheWorstLossRate().getPlayerWithTheWorstLossPorcentage();
             if (minPDto == null) {
                 return new ResponseEntity<>(new Message("NO PLAYER FOUND WITH THE WORST LOSS RATE."), HttpStatus.NO_CONTENT);
             }
@@ -265,7 +265,7 @@ public class DiceGameController {
     @GetMapping("/ranking/winner")
     public ResponseEntity<?> getWorstSuccessRate() {
 
-        PlayerDto minPDto = diceGameServiceImplem.getPlayerWithTheWorstSuccessRate().getPlayerWithTheWorstSuccessPorcentage();
+        PlayerDto minPDto = playerServiceImp.getPlayerWithTheWorstSuccessRate().getPlayerWithTheWorstSuccessPorcentage();
         if (minPDto == null) {
             return new ResponseEntity<>(new Message("NO PLAYER FOUND WITH THE WORST SUCCESSFUL RATE."), HttpStatus.NO_CONTENT);
         } else {

@@ -14,13 +14,14 @@ import cat.dicegame.security.model.Service.AleatoryDiceMethod.ExtraMethodsForRol
 import org.bson.types.ObjectId;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class DiceGameServiceImplem implements PlayerInterfaceOfService, RollInterface {
+public class PlayerServiceImp implements PlayerInterfaceOfService, RollInterface {
 
     @Autowired
     private final ModelMapper modelMapper = new ModelMapper();
@@ -28,7 +29,7 @@ public class DiceGameServiceImplem implements PlayerInterfaceOfService, RollInte
     private final PlayerRepository playerRepository;
 
     @Autowired
-    public DiceGameServiceImplem(PlayerRepository playerRepository) {
+    public PlayerServiceImp(PlayerRepository playerRepository) {
         super();
         this.playerRepository = playerRepository;
     }
@@ -63,7 +64,9 @@ public class DiceGameServiceImplem implements PlayerInterfaceOfService, RollInte
 
         Player player = new Player(namePlayerDtoRequest);
 
-        PlayerDto playerDtoCreated = convertPlayerEntitytoDTO(playerRepository.save(player));
+        Player playerSaved = playerRepository.save(player);
+
+        PlayerDto playerDtoCreated = convertPlayerEntitytoDTO(playerSaved);
 
         averageSuccessRateGetONE(playerDtoCreated);
 

@@ -44,14 +44,14 @@ dependencies {
 
 	// JUnit 5 dependencies
 	testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.2")
-	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
+	//testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
 
 	// Mockito dependencies
-	testImplementation("org.mockito:mockito-core:4.6.1")
+	//testImplementation("org.mockito:mockito-core:4.6.1")
 	//testImplementation("org.mockito.kotlin:mockito-kotlin:3.2.0")
 
 	// AssertJ
-	testImplementation("org.assertj:assertj-core:3.21.0")
+	//testImplementation("org.assertj:assertj-core:3.21.0")
 
 
 

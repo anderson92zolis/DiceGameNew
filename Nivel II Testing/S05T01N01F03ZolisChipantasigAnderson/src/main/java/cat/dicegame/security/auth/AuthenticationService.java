@@ -1,14 +1,10 @@
 package cat.dicegame.security.auth;
 
 import cat.dicegame.security.config.JwtService;
-import cat.dicegame.security.model.Dto.PlayerDto;
 import cat.dicegame.security.model.Entity.Player;
 import cat.dicegame.security.model.Entity.Role;
 import cat.dicegame.security.model.Repository.PlayerRepository;
-import cat.dicegame.security.model.Service.DiceGameServiceImplem;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
