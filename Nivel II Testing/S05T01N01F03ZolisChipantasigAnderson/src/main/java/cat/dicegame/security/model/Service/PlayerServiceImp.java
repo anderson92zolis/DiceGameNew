@@ -189,7 +189,7 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, RollInterface
      * @return the updated list of players with their average success rate and other related fields set
      */
 
-    private List<PlayerDto> averageSuccessRate(List<PlayerDto> playerDtoList) {
+    public List<PlayerDto> averageSuccessRate(List<PlayerDto> playerDtoList) {
 
         for (PlayerDto playerDto : playerDtoList) {
             List<RollDto> listRollDto = playerDto.getRollsList();

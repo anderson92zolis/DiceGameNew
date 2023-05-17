@@ -77,7 +77,6 @@ class DiceGameServiceImplemTest {
         playersListDto.add(playerDtoB);
 
 
-
     }
 
     @AfterEach
@@ -121,15 +120,35 @@ class DiceGameServiceImplemTest {
     }
 
     @Test
-    @Disabled
+        //@Disabled
+
     void getAllUsersInTheGameTest() throws NoSuchElementException {
         //given
+
+
         playerRepository.save(playerA);
         playerRepository.save(playerB);
 
+
         //stubbing mock to return specific data
+
+
         when(playerRepository.findAll()).thenReturn(playersList);
 
+        //PlayerServiceImp mock = Mockito.mock(PlayerServiceImp.class);
+
+        //when(mock.convertListOfPlayerToListOfPLayerDTO()).thenReturn(playersListDto);
+        //when(mock.averageSuccessRate(playersListDto)).thenReturn(playersListDto);
+
+        // Spy:  https://stackoverflow.com/questions/37095096/how-to-mock-a-call-of-an-inner-method-from-a-junit
+
+        //PlayerServiceImp spy = spy(playerServiceImp);
+
+        //create a spy for class-under-test
+        //when(spy.convertListOfPlayerToListOfPLayerDTO()).thenReturn(playersListDto); //partially override behavior of the spy
+
+        //spy = spy(playerServiceImp); //create a spy for class-under-test
+        //when(spy.averageSuccessRate(playersListDto)).thenReturn(playersListDto);
         //when
         List<PlayerDto> playerServiceListDto = playerServiceImp.getAllUsersInTheGame();
         //then
@@ -137,16 +156,17 @@ class DiceGameServiceImplemTest {
         verify(playerRepository, times(1)).save(playerA);
         verify(playerRepository, times(1)).save(playerB);
         verify(playerRepository, times(1)).findAll();
-        //assertEquals(playerServiceListDto,playersListDto);
+        //assertEquals(playerServiceListDto, playersListDto);
+        assertEquals(playerServiceListDto.get(0).getName(), "PLAYERA");
         assertEquals(playerServiceListDto.size(), playersListDto.size());
         assertThat(playerServiceListDto).isNotNull();
-
     }
 
     @Test
-    //@Disabled
+        //@Disabled
     void getPlayerDtoByIdWithOverage() throws ResourceNotFoundException {
         // create a new ObjectId
+
         ObjectId objectId = new ObjectId();
 
         Player expectedPlayer = Player.builder()
@@ -160,19 +180,14 @@ class DiceGameServiceImplemTest {
 
         when(playerRepository.findById(objectId)).thenReturn(Optional.of(expectedPlayer));
 
-        /**
-         * Act -> acció o comportament que testegem
-         */
-        PlayerDto actualPlayer = playerServiceImp.getPlayerDtoByIdWithOverage(objectId) ;
+        //  when
+        PlayerDto actualPlayerDto = playerServiceImp.getPlayerDtoByIdWithOverage(objectId);
+        Player actualPlayerEntity = playerServiceImp.convertPlayerDTOtoEntity(actualPlayerDto);
 
-        /**
-         * Assert -> verificar la sortida
-         */
-        assertEquals(expectedPlayer, actualPlayer);
+        // then
+
+        assertEquals(expectedPlayer, actualPlayerEntity);
         verify(playerRepository).findById(objectId);
-
-        when(playerRepository.findById(objectId)).thenReturn(Optional.ofNullable(playerA));
-        assertThat(playerServiceImp.getPlayerById(playerA.getId())).isEqualTo(playerDtoA);
     }
 
     @Test

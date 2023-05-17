@@ -39,6 +39,7 @@ public class PlayerDto {
 
     public PlayerDto(String name){
         this.name=name;
+        //this.localDateTime = LocalDateTime.now();
     }
 
     /*
