@@ -193,7 +193,7 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, RollInterface
 
         List<PlayerDto> listPlayerDto = convertListOfPlayerToListOfPLayerDTO();
 
-        averageSuccessRateAllPlayer(listPlayerDto); // PUT THE OVERAGES OF THE PLAYERS
+        setAverageSuccessRateAllPlayer(listPlayerDto); // PUT THE OVERAGES OF THE PLAYERS
 
         return listPlayerDto;
 
@@ -206,7 +206,7 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, RollInterface
      * @return the updated list of players with their average success rate and other related fields set
      */
 
-    public List<PlayerDto> averageSuccessRateAllPlayer(List<PlayerDto> playerDtoList) {
+    public List<PlayerDto> setAverageSuccessRateAllPlayer(List<PlayerDto> playerDtoList) {
 
         for (PlayerDto playerDto : playerDtoList) {
             List<RollDto> listRollDto = playerDto.getRollsList();
@@ -272,7 +272,7 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, RollInterface
     @Override
     public RankingDto getOveragesRankingOfAllPlayer() throws NoPlayersFoundRepositoryException {
 
-        return calculationOfSuccessAveragesOfAllPlayers(averageSuccessRateAllPlayer(convertListOfPlayerToListOfPLayerDTO(
+        return calculationOfSuccessAveragesOfAllPlayers(setAverageSuccessRateAllPlayer(convertListOfPlayerToListOfPLayerDTO(
 
         )));
 
@@ -316,7 +316,7 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, RollInterface
     public RankingDto getPlayerWithTheWorstLossRate() throws NoPlayersFoundRepositoryException {
 
 
-        return worstLoserRateMethod(averageSuccessRateAllPlayer(getAllPlayerInTheGameWithOverage()));
+        return worstLoserRateMethod(setAverageSuccessRateAllPlayer(getAllPlayerInTheGameWithOverage()));
 
     }
 
@@ -353,7 +353,7 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, RollInterface
     @Override
     public RankingDto getPlayerWithTheWorstSuccessRate() throws NoPlayersFoundRepositoryException {
 
-        return worstSuccessRateMethod(averageSuccessRateAllPlayer(getAllPlayerInTheGameWithOverage()));
+        return worstSuccessRateMethod(setAverageSuccessRateAllPlayer(getAllPlayerInTheGameWithOverage()));
 
     }
 
@@ -400,7 +400,9 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, RollInterface
 
         List<Player> listPlayer = getAllPlayersFromDB();
 
-        List<PlayerDto> listPlayerDto = listPlayer.stream().map(this::convertPlayerEntitytoDTO).collect(Collectors.toList());
+        List<PlayerDto> listPlayerDto = listPlayer.stream()
+                .map(this::convertPlayerEntitytoDTO)
+                .collect(Collectors.toList());
 
         return listPlayerDto;
     }

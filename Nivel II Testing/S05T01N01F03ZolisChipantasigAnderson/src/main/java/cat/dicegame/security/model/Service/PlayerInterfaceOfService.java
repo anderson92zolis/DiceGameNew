@@ -23,7 +23,6 @@ public interface PlayerInterfaceOfService {
 
     List<Player> getAllPlayersFromDB() throws NoPlayersFoundRepositoryException;
 
-
     List<PlayerDto> getAllPlayerInTheGameWithOverage() throws NoPlayersFoundRepositoryException;
 
     PlayerDto getPlayerDtoByIdWithOverage(ObjectId id) throws ResourceNotFoundException;
