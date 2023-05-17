@@ -13,11 +13,12 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class AuthenticationService {
+public class AuthenticationService implements AuthenticationInterface{
 
     private final PlayerRepository playerRepository;
     private final PasswordEncoder passwordEncoder;
@@ -56,8 +57,11 @@ public class AuthenticationService {
                         request.getPassword()
                 )
         );
+
+
         var user = playerRepository.findByEmail(request.getEmail())
                 .orElseThrow();
+
 
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
@@ -77,6 +81,22 @@ public class AuthenticationService {
             verified = true;
         }
         return verified;
+    }
+
+    @Override
+    public Boolean verifyFindByEmail(String email) {
+
+        boolean verified = false;
+
+        List<Player> playerList = playerRepository.findAll();
+
+        List<Player> filteredPlayers = playerList.stream().filter(player -> player.getEmail().equalsIgnoreCase(email)).collect(Collectors.toList());
+
+        if (filteredPlayers.size() != 0) {
+            verified = true;
+        }
+        return verified;
+
     }
 
 

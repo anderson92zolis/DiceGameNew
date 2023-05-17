@@ -4,6 +4,7 @@ import cat.dicegame.security.model.Dto.PlayerDto;
 import cat.dicegame.security.model.Entity.Player;
 import cat.dicegame.security.model.Entity.Role;
 import cat.dicegame.security.model.Exceptions.NameRepetitiveException;
+import cat.dicegame.security.model.Exceptions.NoPlayersFoundRepositoryException;
 import cat.dicegame.security.model.Exceptions.ResourceNotFoundException;
 import cat.dicegame.security.model.Repository.PlayerRepository;
 import org.bson.types.ObjectId;
@@ -182,7 +183,7 @@ class DiceGameServiceImplemTest {
     @Test
         //@Disabled
 
-    void getAllUsersInTheGameTest() throws NoSuchElementException {
+    void getAllUsersInTheGameTest() throws NoSuchElementException, NoPlayersFoundRepositoryException {
         //given
 
 
@@ -210,7 +211,7 @@ class DiceGameServiceImplemTest {
         //spy = spy(playerServiceImp); //create a spy for class-under-test
         //when(spy.averageSuccessRate(playersListDto)).thenReturn(playersListDto);
         //when
-        List<PlayerDto> playerServiceListDto = playerServiceImp.getAllUsersInTheGame();
+        List<PlayerDto> playerServiceListDto = playerServiceImp.getAllPlayerInTheGameWithOverage();
         //then
 
         verify(playerRepository, times(1)).save(playerA);

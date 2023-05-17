@@ -17,24 +17,27 @@ public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
 
-
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
             @RequestBody RegisterRequest request
     ) {
-        if (authenticationService.verifyPlayerName(request.getName())) {
+        if (authenticationService.verifyPlayerName(request.getName()) ) {
             return new ResponseEntity(new Message("PLAYER ALREADY EXISTS WITH NAME: " + request.getName()), HttpStatus.OK);
+        }
+        if (authenticationService.verifyFindByEmail(request.getEmail())) {
+            return new ResponseEntity(
+                    new Message("PLAYER ALREADY EXISTS WITH THIS EMAIL: " + request.getEmail()), HttpStatus.OK);
         } else {
             return ResponseEntity.ok(authenticationService.register(request));
         }
     }
+
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request
     ) {
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
-
 
 
 }

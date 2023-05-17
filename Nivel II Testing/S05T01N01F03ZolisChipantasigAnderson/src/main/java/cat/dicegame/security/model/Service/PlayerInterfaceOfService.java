@@ -6,6 +6,7 @@ import cat.dicegame.security.model.Dto.PlayerDto;
 import cat.dicegame.security.model.Dto.RankingDto;
 import cat.dicegame.security.model.Entity.Player;
 import cat.dicegame.security.model.Exceptions.NameRepetitiveException;
+import cat.dicegame.security.model.Exceptions.NoPlayersFoundRepositoryException;
 import cat.dicegame.security.model.Exceptions.ResourceNotFoundException;
 import org.bson.types.ObjectId;
 
@@ -20,17 +21,18 @@ public interface PlayerInterfaceOfService {
 
     void deleteUser(ObjectId id);
 
-    
+    List<Player> getAllPlayersFromDB() throws NoPlayersFoundRepositoryException;
 
-    List<PlayerDto> getAllUsersInTheGame();
+
+    List<PlayerDto> getAllPlayerInTheGameWithOverage() throws NoPlayersFoundRepositoryException;
 
     PlayerDto getPlayerDtoByIdWithOverage(ObjectId id) throws ResourceNotFoundException;
 
-    RankingDto getOveragesRankingOfAllPlayer();
+    RankingDto getOveragesRankingOfAllPlayer() throws NoPlayersFoundRepositoryException;
 
-    RankingDto getPlayerWithTheWorstLossRate();
+    RankingDto getPlayerWithTheWorstLossRate() throws NoPlayersFoundRepositoryException;
 
-    RankingDto getPlayerWithTheWorstSuccessRate();
+    RankingDto getPlayerWithTheWorstSuccessRate() throws NoPlayersFoundRepositoryException;
 
 
     // METHODS OF VERIFICATION WITH ID AND NAME OF THE PLAYER

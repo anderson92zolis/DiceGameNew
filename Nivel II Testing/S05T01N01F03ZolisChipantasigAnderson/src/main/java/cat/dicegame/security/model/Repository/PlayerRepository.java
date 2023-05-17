@@ -11,6 +11,6 @@ import java.util.Optional;
 @Repository
 public interface PlayerRepository extends MongoRepository<Player, ObjectId> {
 
-    Optional<Player> findByEmail(String email);
+   Optional<Player> findByEmail(String email);
 
 }

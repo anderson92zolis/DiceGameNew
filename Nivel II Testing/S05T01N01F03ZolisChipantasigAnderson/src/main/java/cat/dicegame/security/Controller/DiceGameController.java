@@ -5,6 +5,7 @@ package cat.dicegame.security.Controller;
 import cat.dicegame.security.model.Dto.PlayerDto;
 import cat.dicegame.security.model.Dto.RankingDto;
 import cat.dicegame.security.model.Exceptions.NameRepetitiveException;
+import cat.dicegame.security.model.Exceptions.NoPlayersFoundRepositoryException;
 import cat.dicegame.security.model.Exceptions.ResourceNotFoundException;
 import cat.dicegame.security.model.Message.Message;
 import cat.dicegame.security.model.Service.PlayerServiceImp;
@@ -40,7 +41,6 @@ public class DiceGameController {
      * If not, it creates a new player and sets the appropriate values for the response.
      * The method returns a ResponseEntity object containing the PlayerDto object and the appropriate HTTP status code.
     */
-
 
 
     @PostMapping("/new")
@@ -171,7 +171,7 @@ public class DiceGameController {
     public ResponseEntity<?> getAllPlayers() {
 
         try {
-            List<PlayerDto> listPlayerDto = playerServiceImp.getAllUsersInTheGame();
+            List<PlayerDto> listPlayerDto = playerServiceImp.getAllPlayerInTheGameWithOverage();
 
             return new ResponseEntity<>(listPlayerDto, HttpStatus.OK);
         } catch (NoSuchElementException e) {
@@ -215,7 +215,7 @@ public class DiceGameController {
     public ResponseEntity<?> getOverageRankingOfAllPlayer() {
 
         try {
-            List<PlayerDto> diceGameDtos = playerServiceImp.getAllUsersInTheGame();
+            List<PlayerDto> diceGameDtos = playerServiceImp.getAllPlayerInTheGameWithOverage();
             RankingDto rankingDto = playerServiceImp.getOveragesRankingOfAllPlayer();
             if (diceGameDtos.isEmpty()) {
                 return new ResponseEntity<>(new Message("THE IS NOT PLAYERS IN DE GAME"), HttpStatus.NO_CONTENT);
@@ -263,7 +263,7 @@ public class DiceGameController {
      */
 
     @GetMapping("/ranking/winner")
-    public ResponseEntity<?> getWorstSuccessRate() {
+    public ResponseEntity<?> getWorstSuccessRate() throws NoPlayersFoundRepositoryException {
 
         PlayerDto minPDto = playerServiceImp.getPlayerWithTheWorstSuccessRate().getPlayerWithTheWorstSuccessPorcentage();
         if (minPDto == null) {
