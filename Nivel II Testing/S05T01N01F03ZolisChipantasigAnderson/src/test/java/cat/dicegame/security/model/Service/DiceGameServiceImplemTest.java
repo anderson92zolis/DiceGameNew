@@ -3,6 +3,7 @@ package cat.dicegame.security.model.Service;
 import cat.dicegame.security.model.Dto.PlayerDto;
 import cat.dicegame.security.model.Entity.Player;
 import cat.dicegame.security.model.Entity.Role;
+import cat.dicegame.security.model.Exceptions.NameRepetitiveException;
 import cat.dicegame.security.model.Exceptions.ResourceNotFoundException;
 import cat.dicegame.security.model.Repository.PlayerRepository;
 import org.bson.types.ObjectId;
@@ -100,8 +101,40 @@ class DiceGameServiceImplemTest {
     }
 
     @Test
-    @Disabled
-    void updatePlayer() {
+    //@Disabled
+    void updatePlayer() throws NameRepetitiveException, ResourceNotFoundException {
+
+        //given
+        ObjectId objectId = new ObjectId();
+
+        Player expectedPlayer = Player.builder()
+                .id(objectId)
+                .name("Anderson")
+                .email("anderso_nemail@gmail.com")
+                .password("password")
+                .localDateTime(LocalDateTime.now())
+                .rollsList(new ArrayList<>())
+                .role(role).build();
+
+
+        //playerRepository.save(expectedPlayer);
+
+        when(playerRepository.existsById(objectId)).thenReturn(true);
+        when(playerRepository.findById(objectId)).thenReturn(Optional.ofNullable(expectedPlayer));
+        when(playerRepository.save(any())).thenReturn(expectedPlayer);
+        //when(playerRepository.findById(objectId)).thenReturn(Optional.of(expectedPlayer));
+
+        //expectedPlayer.setName("UpdatedPlayer");
+
+        //when
+        //PlayerDto playertoDto = playerServiceImp.convertPlayerEntitytoDTO(expectedPlayer);
+        PlayerDto playertoDto =new PlayerDto("UpdatedPlayer");
+
+        PlayerDto playerAUpdatedDto= playerServiceImp.updatePlayer(expectedPlayer.getId(), playertoDto);
+
+        //then
+        assertEquals("UpdatedPlayer", playerAUpdatedDto.getName());
+        //verify(playerRepository).findById(objectId);
     }
 
     @Test
@@ -115,8 +148,9 @@ class DiceGameServiceImplemTest {
     }
 
     @Test
-    @Disabled
+        // @Disabled
     void deleteUser() {
+
     }
 
     @Test
