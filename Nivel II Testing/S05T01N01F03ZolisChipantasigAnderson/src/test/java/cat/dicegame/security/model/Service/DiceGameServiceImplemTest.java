@@ -23,11 +23,12 @@ import java.util.Optional;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.*;
 
 //  https://www.youtube.com/watch?v=Geq60OVyBPg
 // https://www.baeldung.com/mockito-junit-5-extension
-// The page that are follow!
+// The page that are follow:   https://springframework.guru/testing-spring-boot-restful-services/
 
 
 //@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -101,7 +102,7 @@ class DiceGameServiceImplemTest {
     }
 
     @Test
-    //@Disabled
+        //@Disabled
     void updatePlayer() throws NameRepetitiveException, ResourceNotFoundException {
 
         //given
@@ -128,9 +129,9 @@ class DiceGameServiceImplemTest {
 
         //when
         //PlayerDto playertoDto = playerServiceImp.convertPlayerEntitytoDTO(expectedPlayer);
-        PlayerDto playertoDto =new PlayerDto("UpdatedPlayer");
+        PlayerDto playertoDto = new PlayerDto("UpdatedPlayer");
 
-        PlayerDto playerAUpdatedDto= playerServiceImp.updatePlayer(expectedPlayer.getId(), playertoDto);
+        PlayerDto playerAUpdatedDto = playerServiceImp.updatePlayer(expectedPlayer.getId(), playertoDto);
 
         //then
         assertEquals("UpdatedPlayer", playerAUpdatedDto.getName());
@@ -143,8 +144,33 @@ class DiceGameServiceImplemTest {
     }
 
     @Test
-    @Disabled
+    //@Disabled
     void deleteRollsofAPlayer() {
+
+        //given
+
+
+        ObjectId objectId = new ObjectId();
+
+
+        Player expectedPlayer = Player.builder()
+                .id(objectId)
+                .name("Anderson")
+                .email("andersonEmail@gmail.com")
+                .password("password")
+                .localDateTime(LocalDateTime.now())
+                .rollsList(new ArrayList<>())
+                .role(role).build();
+
+        willDoNothing().given(playerRepository).deleteById(objectId);
+
+        //when
+
+        playerServiceImp.deleteUser(objectId);
+        // then
+
+        verify(playerRepository, times(1)).deleteById(objectId);
+
     }
 
     @Test
