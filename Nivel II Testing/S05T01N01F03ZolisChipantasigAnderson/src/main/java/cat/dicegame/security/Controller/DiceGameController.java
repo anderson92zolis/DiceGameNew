@@ -171,7 +171,7 @@ public class DiceGameController {
     public ResponseEntity<?> getAllPlayers() {
 
         try {
-            List<PlayerDto> listPlayerDto = playerServiceImp.getAllPlayerInTheGameWithOverage();
+            List<PlayerDto> listPlayerDto = playerServiceImp.getAllPlayersInTheGameWithOverage();
 
             return new ResponseEntity<>(listPlayerDto, HttpStatus.OK);
         } catch (NoSuchElementException e) {
@@ -215,7 +215,7 @@ public class DiceGameController {
     public ResponseEntity<?> getOverageRankingOfAllPlayer() {
 
         try {
-            List<PlayerDto> diceGameDtos = playerServiceImp.getAllPlayerInTheGameWithOverage();
+            List<PlayerDto> diceGameDtos = playerServiceImp.getAllPlayersInTheGameWithOverage();
             RankingDto rankingDto = playerServiceImp.getOveragesRankingOfAllPlayer();
             if (diceGameDtos.isEmpty()) {
                 return new ResponseEntity<>(new Message("THE IS NOT PLAYERS IN DE GAME"), HttpStatus.NO_CONTENT);

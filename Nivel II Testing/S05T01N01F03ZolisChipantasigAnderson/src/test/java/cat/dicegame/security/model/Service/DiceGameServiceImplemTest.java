@@ -104,7 +104,7 @@ class DiceGameServiceImplemTest {
 
     @Test
         //@Disabled
-    void updatePlayer() throws NameRepetitiveException, ResourceNotFoundException {
+    void updatePlayerTest() throws NameRepetitiveException, ResourceNotFoundException {
 
         //given
         ObjectId objectId = new ObjectId();
@@ -140,13 +140,40 @@ class DiceGameServiceImplemTest {
     }
 
     @Test
-    @Disabled
-    void createRoll() {
+        //@Disabled
+    void createRollTest() throws ResourceNotFoundException {
+        //given
+        ObjectId objectId = new ObjectId();
+
+        Player expectedPlayer = Player.builder()
+                .id(objectId)
+                .name("Anderson")
+                .email("anderso_nemail@gmail.com")
+                .password("password")
+                .localDateTime(LocalDateTime.now())
+                .rollsList(new ArrayList<>())
+                .role(role).build();
+
+        when(playerRepository.save(expectedPlayer)).thenReturn(expectedPlayer);
+        when(playerRepository.findById(objectId)).thenReturn(Optional.ofNullable(expectedPlayer));
+
+        //when
+
+        //Adding Rolls
+        // 1 to 3
+        PlayerDto expectedPlayerWithRoll = playerServiceImp.createRoll(objectId);
+        expectedPlayerWithRoll = playerServiceImp.createRoll(objectId);
+        expectedPlayerWithRoll = playerServiceImp.createRoll(objectId);
+
+        //then
+        assertEquals(3, expectedPlayerWithRoll.getRollsList().size());
+        assertThat(expectedPlayerWithRoll.getRollsList().size()).isNotNull();
+
     }
 
     @Test
-    //@Disabled
-    void deleteRollsofAPlayer() {
+        //@Disabled
+    void deleteRollsofAPlayerTest() {
 
         //given
 
@@ -168,8 +195,8 @@ class DiceGameServiceImplemTest {
         //when
 
         playerServiceImp.deleteUser(objectId);
-        // then
 
+        // then
         verify(playerRepository, times(1)).deleteById(objectId);
 
     }
@@ -211,7 +238,7 @@ class DiceGameServiceImplemTest {
         //spy = spy(playerServiceImp); //create a spy for class-under-test
         //when(spy.averageSuccessRate(playersListDto)).thenReturn(playersListDto);
         //when
-        List<PlayerDto> playerServiceListDto = playerServiceImp.getAllPlayerInTheGameWithOverage();
+        List<PlayerDto> playerServiceListDto = playerServiceImp.getAllPlayersInTheGameWithOverage();
         //then
 
         verify(playerRepository, times(1)).save(playerA);

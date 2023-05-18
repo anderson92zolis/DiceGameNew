@@ -21,13 +21,13 @@ public interface PlayerInterfaceOfService {
 
     void deleteUser(ObjectId id);
 
-    List<Player> getAllPlayersFromDB() throws NoPlayersFoundRepositoryException;
+    List<Player> getAllPlayersFromDB();
 
-    List<PlayerDto> getAllPlayerInTheGameWithOverage() throws NoPlayersFoundRepositoryException;
+    List<PlayerDto> getAllPlayersInTheGameWithOverage() throws NoPlayersFoundRepositoryException;
 
     PlayerDto getPlayerDtoByIdWithOverage(ObjectId id) throws ResourceNotFoundException;
 
-    RankingDto getOveragesRankingOfAllPlayer() throws NoPlayersFoundRepositoryException;
+    RankingDto getOveragesRankingOfAllPlayer() ;
 
     RankingDto getPlayerWithTheWorstLossRate() throws NoPlayersFoundRepositoryException;
 
@@ -36,7 +36,7 @@ public interface PlayerInterfaceOfService {
 
     // METHODS OF VERIFICATION WITH ID AND NAME OF THE PLAYER
 
-    Boolean exitsById(ObjectId id);
+    Boolean exitsById(ObjectId id) throws ResourceNotFoundException;
     Boolean verifyPlayerName(String namePlayerDtoRequest);
     Player getPlayerById(ObjectId id) throws ResourceNotFoundException;
 

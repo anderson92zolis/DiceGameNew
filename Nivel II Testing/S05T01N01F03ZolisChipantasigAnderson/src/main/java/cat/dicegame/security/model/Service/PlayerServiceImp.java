@@ -20,7 +20,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class PlayerServiceImp implements PlayerInterfaceOfService, RollInterface {
+public class PlayerServiceImp implements PlayerInterfaceOfService, GamesInterfaceServ {
 
     @Autowired
     private final ModelMapper modelMapper = new ModelMapper();
@@ -113,6 +113,7 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, RollInterface
     @Override
     public PlayerDto createRoll(ObjectId id) throws ResourceNotFoundException {
 
+
         Player player = getPlayerById(id);
 
         Roll roll = new Roll();
@@ -166,18 +167,9 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, RollInterface
     }
 
     @Override
-    public List<Player> getAllPlayersFromDB() throws NoPlayersFoundRepositoryException {
+    public List<Player> getAllPlayersFromDB() {
 
-        List<Player> playersInDB = null;
-
-        try {
-            // Assuming you have a repository instance to fetch the data from
-            playersInDB = playerRepository.findAll();
-
-        } catch (Exception e) {
-            // Handle any specific exceptions related to the repository here
-            throw new NoPlayersFoundRepositoryException("FAILED TO RETRIEVE PLAYERS FROM THE DATABASE!" + e.getMessage());
-        }
+        List<Player> playersInDB = playerRepository.findAll();
         return playersInDB;
     }
 
@@ -189,13 +181,28 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, RollInterface
      * @throws NoSuchElementException if the list of players is empty
      */
     @Override
-    public List<PlayerDto> getAllPlayerInTheGameWithOverage() throws NoPlayersFoundRepositoryException {
+    public List<PlayerDto> getAllPlayersInTheGameWithOverage() throws NoPlayersFoundRepositoryException {
 
+        /*
         List<PlayerDto> listPlayerDto = convertListOfPlayerToListOfPLayerDTO();
 
         setAverageSuccessRateAllPlayer(listPlayerDto); // PUT THE OVERAGES OF THE PLAYERS
 
         return listPlayerDto;
+
+        */
+
+        try {
+            List<PlayerDto> listPlayerDto = convertListOfPlayerToListOfPLayerDTO();
+
+            setAverageSuccessRateAllPlayer(listPlayerDto); // PUT THE OVERAGES OF THE PLAYERS
+
+            return listPlayerDto;
+
+        } catch (Exception e) {
+            // Handle any specific exceptions related to the repository here
+            throw new NoPlayersFoundRepositoryException("FAILED TO RETRIEVE PLAYERS FROM THE DATABASE!" + e.getMessage());
+        }
 
     }
 
@@ -234,7 +241,9 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, RollInterface
      */
     @Override
     public PlayerDto getPlayerDtoByIdWithOverage(ObjectId id) throws ResourceNotFoundException {
+
         PlayerDto playerDto = convertPlayerEntitytoDTO(getPlayerById(id));
+
         averageSuccessRateGetONE(playerDto);
         return playerDto;
     }
@@ -270,12 +279,11 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, RollInterface
      * The purpose of the method is to calculate the average success rate of all players, rank them based on their success rate, and return a RankingDto object containing the ranked list of players.
      */
     @Override
-    public RankingDto getOveragesRankingOfAllPlayer() throws NoPlayersFoundRepositoryException {
+    public RankingDto getOveragesRankingOfAllPlayer()  {
 
         return calculationOfSuccessAveragesOfAllPlayers(setAverageSuccessRateAllPlayer(convertListOfPlayerToListOfPLayerDTO(
 
         )));
-
     }
 
     /**
@@ -315,8 +323,7 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, RollInterface
     @Override
     public RankingDto getPlayerWithTheWorstLossRate() throws NoPlayersFoundRepositoryException {
 
-
-        return worstLoserRateMethod(setAverageSuccessRateAllPlayer(getAllPlayerInTheGameWithOverage()));
+        return worstLoserRateMethod(setAverageSuccessRateAllPlayer(getAllPlayersInTheGameWithOverage()));
 
     }
 
@@ -353,7 +360,7 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, RollInterface
     @Override
     public RankingDto getPlayerWithTheWorstSuccessRate() throws NoPlayersFoundRepositoryException {
 
-        return worstSuccessRateMethod(setAverageSuccessRateAllPlayer(getAllPlayerInTheGameWithOverage()));
+        return worstSuccessRateMethod(setAverageSuccessRateAllPlayer(getAllPlayersInTheGameWithOverage()));
 
     }
 
@@ -395,7 +402,7 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, RollInterface
      *
      * @return A List of PlayerDto objects representing all the Player entities in the database.
      */
-    public List<PlayerDto> convertListOfPlayerToListOfPLayerDTO() throws NoPlayersFoundRepositoryException {
+    public List<PlayerDto> convertListOfPlayerToListOfPLayerDTO()  {
 
 
         List<Player> listPlayer = getAllPlayersFromDB();
@@ -408,8 +415,17 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, RollInterface
     }
 
     @Override
-    public Boolean exitsById(ObjectId id) {
+    public Boolean exitsById(ObjectId id){
+
         return playerRepository.existsById(id);
+
+        /*
+        if (!playerRepository.existsById(id)) {
+            throw new ResourceNotFoundException("PLAYER NOT FOUND WITH ID: " + id);
+        }
+        return true;
+
+         */
     }
 
     @Override
@@ -435,9 +451,7 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, RollInterface
         if (optionalPlayer.isPresent()) {
             return optionalPlayer.get();
         } else {
-            throw new ResourceNotFoundException("ID NOT EXISTS");
+            throw new ResourceNotFoundException("PLAYER NOT FOUND WITH ID: " + id);
         }
     }
-
-
 }
