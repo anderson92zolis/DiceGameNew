@@ -1,6 +1,7 @@
 package cat.dicegame.security.model.Service;
 
 import cat.dicegame.security.model.Dto.PlayerDto;
+import cat.dicegame.security.model.Dto.RollDto;
 import cat.dicegame.security.model.Entity.Player;
 import cat.dicegame.security.model.Entity.Role;
 import cat.dicegame.security.model.Exceptions.NameRepetitiveException;
@@ -16,10 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,6 +28,7 @@ import static org.mockito.Mockito.*;
 //  https://www.youtube.com/watch?v=Geq60OVyBPg
 // https://www.baeldung.com/mockito-junit-5-extension
 // The page that are follow:   https://springframework.guru/testing-spring-boot-restful-services/
+// Spy:  https://stackoverflow.com/questions/37095096/how-to-mock-a-call-of-an-inner-method-from-a-junit
 
 
 //@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -174,12 +173,14 @@ class DiceGameServiceImplemTest {
     @Test
         //@Disabled
     void deleteRollsofAPlayerTest() {
+    }
 
+    @Test
+        // @Disabled
+    void deleteUser() {
         //given
 
-
         ObjectId objectId = new ObjectId();
-
 
         Player expectedPlayer = Player.builder()
                 .id(objectId)
@@ -201,50 +202,50 @@ class DiceGameServiceImplemTest {
 
     }
 
+
     @Test
         // @Disabled
-    void deleteUser() {
-
-    }
-
-    @Test
-        //@Disabled
-
-    void getAllUsersInTheGameTest() throws NoSuchElementException, NoPlayersFoundRepositoryException {
+    void getAllPlayersFromDB() {
         //given
-
 
         playerRepository.save(playerA);
         playerRepository.save(playerB);
-
-
-        //stubbing mock to return specific data
-
-
         when(playerRepository.findAll()).thenReturn(playersList);
 
-        //PlayerServiceImp mock = Mockito.mock(PlayerServiceImp.class);
-
-        //when(mock.convertListOfPlayerToListOfPLayerDTO()).thenReturn(playersListDto);
-        //when(mock.averageSuccessRate(playersListDto)).thenReturn(playersListDto);
-
-        // Spy:  https://stackoverflow.com/questions/37095096/how-to-mock-a-call-of-an-inner-method-from-a-junit
-
-        //PlayerServiceImp spy = spy(playerServiceImp);
-
-        //create a spy for class-under-test
-        //when(spy.convertListOfPlayerToListOfPLayerDTO()).thenReturn(playersListDto); //partially override behavior of the spy
-
-        //spy = spy(playerServiceImp); //create a spy for class-under-test
-        //when(spy.averageSuccessRate(playersListDto)).thenReturn(playersListDto);
         //when
-        List<PlayerDto> playerServiceListDto = playerServiceImp.getAllPlayersInTheGameWithOverage();
+
+        List<Player> playerServiceListDto = playerServiceImp.getAllPlayersFromDB();
+
         //then
 
         verify(playerRepository, times(1)).save(playerA);
         verify(playerRepository, times(1)).save(playerB);
         verify(playerRepository, times(1)).findAll();
-        //assertEquals(playerServiceListDto, playersListDto);
+        assertEquals(playerServiceListDto.get(0).getName(), "PLAYERA");
+        assertEquals(playerServiceListDto.size(), playersListDto.size());
+        assertThat(playerServiceListDto).isNotNull();
+
+    }
+    @Test
+        //@Disabled
+    void getAllUsersInTheGameTest() throws NoSuchElementException, NoPlayersFoundRepositoryException {
+        //given
+
+        playerRepository.save(playerA);
+        playerRepository.save(playerB);
+
+        //stubbing mock to return specific data
+
+        when(playerRepository.findAll()).thenReturn(playersList);
+        //when
+
+        List<PlayerDto> playerServiceListDto = playerServiceImp.getAllPlayersInTheGameWithOverage();
+
+        //then
+
+        verify(playerRepository, times(1)).save(playerA);
+        verify(playerRepository, times(1)).save(playerB);
+        verify(playerRepository, times(1)).findAll();
         assertEquals(playerServiceListDto.get(0).getName(), "PLAYERA");
         assertEquals(playerServiceListDto.size(), playersListDto.size());
         assertThat(playerServiceListDto).isNotNull();
@@ -279,12 +280,36 @@ class DiceGameServiceImplemTest {
     }
 
     @Test
-    @Disabled
-    void averageSuccessRateGetONE() {
+    //@Disabled
+    void averageSuccessRateGetONETest() throws ResourceNotFoundException {
+
+        // Create a PlayerDto object for testing
+        PlayerDto playerDto = new PlayerDto();
+
+        // Create a list of RollDto objects
+        List<RollDto> rollsListDto = new ArrayList<>();
+
+        // Add RollDto objects to the list
+        rollsListDto.add(new RollDto(1, 2, "WIN", new Date()));
+        rollsListDto.add(new RollDto(3, 4, "WIN", new Date()));
+        rollsListDto.add(new RollDto(5, 6, "LOSS", new Date()));
+        rollsListDto.add(new RollDto(2, 3, "WIN", new Date()));
+
+        // Set the rollsListDto in the playerDto
+        playerDto.setRollsList(rollsListDto);
+
+        // Call the method to test
+        playerServiceImp.averageSuccessRateGetONE(playerDto);
+
+        // Assert the expected values
+        Assert.assertEquals("YOUR AVERAGE SUCCESS RATE IS 75.0 % PERCENTAGE", playerDto.getAverageSuccessRate());
+        Assert.assertEquals(25.0, playerDto.getAverageLoserRateNumber(), 0.0);
+        Assert.assertEquals(75.0, playerDto.getAverageSuccessRateNumber(),
     }
 
+
     @Test
-    @Disabled
+    //@Disabled
     void getOveragesRankingOfAllPlayer() {
     }
 
@@ -306,6 +331,8 @@ class DiceGameServiceImplemTest {
     @Test
     @Disabled
     void exitsById() {
+
+
     }
 
     @Test

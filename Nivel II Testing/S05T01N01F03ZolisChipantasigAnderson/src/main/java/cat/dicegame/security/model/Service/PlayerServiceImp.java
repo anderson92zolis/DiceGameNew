@@ -193,6 +193,7 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, GamesInterfac
         */
 
         try {
+
             List<PlayerDto> listPlayerDto = convertListOfPlayerToListOfPLayerDTO();
 
             setAverageSuccessRateAllPlayer(listPlayerDto); // PUT THE OVERAGES OF THE PLAYERS
