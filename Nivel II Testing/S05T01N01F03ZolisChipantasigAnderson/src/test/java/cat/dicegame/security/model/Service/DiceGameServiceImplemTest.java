@@ -9,6 +9,7 @@ import cat.dicegame.security.model.Exceptions.NoPlayersFoundRepositoryException;
 import cat.dicegame.security.model.Exceptions.ResourceNotFoundException;
 import cat.dicegame.security.model.Repository.PlayerRepository;
 import org.bson.types.ObjectId;
+import org.junit.Assert;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -281,13 +282,14 @@ class DiceGameServiceImplemTest {
 
     @Test
     //@Disabled
-    void averageSuccessRateGetONETest() throws ResourceNotFoundException {
+    void averageSuccessRateGetONETest() {
 
         // Create a PlayerDto object for testing
         PlayerDto playerDto = new PlayerDto();
 
         // Create a list of RollDto objects
         List<RollDto> rollsListDto = new ArrayList<>();
+
 
         // Add RollDto objects to the list
         rollsListDto.add(new RollDto(1, 2, "WIN", new Date()));
@@ -299,12 +301,12 @@ class DiceGameServiceImplemTest {
         playerDto.setRollsList(rollsListDto);
 
         // Call the method to test
-        playerServiceImp.averageSuccessRateGetONE(playerDto);
+       playerServiceImp.averageSuccessRateGetONE(playerDto);
 
         // Assert the expected values
         Assert.assertEquals("YOUR AVERAGE SUCCESS RATE IS 75.0 % PERCENTAGE", playerDto.getAverageSuccessRate());
-        Assert.assertEquals(25.0, playerDto.getAverageLoserRateNumber(), 0.0);
-        Assert.assertEquals(75.0, playerDto.getAverageSuccessRateNumber(),
+        Assert.assertEquals( "25.0",  playerDto.getAverageLoserRateNumber().toString());
+        Assert.assertEquals( "75.0",  playerDto.getAverageSuccessRateNumber().toString());
     }
 
 
@@ -329,9 +331,29 @@ class DiceGameServiceImplemTest {
     }
 
     @Test
-    @Disabled
+    //@Disabled
     void exitsById() {
+        //given
+        ObjectId objectId = new ObjectId();
 
+        Player expectedPlayer = Player.builder()
+                .id(objectId)
+                .name("Anderson")
+                .email("anderso_nemail@gmail.com")
+                .password("password")
+                .localDateTime(LocalDateTime.now())
+                .rollsList(new ArrayList<>())
+                .role(role).build();
+
+        when(playerRepository.existsById(objectId)).thenReturn(true);
+
+        //when
+
+        Boolean playerFound = playerServiceImp.exitsById(objectId);
+
+        //then
+        assertEquals(true,playerFound);
+        //verify(playerRepository).findById(objectId);
 
     }
 
