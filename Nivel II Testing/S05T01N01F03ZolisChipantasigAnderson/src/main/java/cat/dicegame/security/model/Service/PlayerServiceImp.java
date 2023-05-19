@@ -234,7 +234,6 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, GamesInterfac
         return playerDtoList;
     }
 
-    // MODEL-MAPPER
 
     /**
      * @param id the ID of the player to retrieve.
@@ -293,7 +292,7 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, GamesInterfac
      * @param playerDtoList list of player data transfer objects to calculate the ranking for
      * @return ranking data transfer object containing the average success ranking
      */
-    private RankingDto calculationOfSuccessAveragesOfAllPlayers(List<PlayerDto> playerDtoList) {
+    public RankingDto calculationOfSuccessAveragesOfAllPlayers(List<PlayerDto> playerDtoList) {
 
         Double sumOfPlayerThatHavePlayedSuccessRanking = 0.0;
         Double averageSuccessRanking = 0.0;

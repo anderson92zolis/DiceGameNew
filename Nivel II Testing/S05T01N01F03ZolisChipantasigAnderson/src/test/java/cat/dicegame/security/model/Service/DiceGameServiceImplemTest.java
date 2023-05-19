@@ -1,6 +1,7 @@
 package cat.dicegame.security.model.Service;
 
 import cat.dicegame.security.model.Dto.PlayerDto;
+import cat.dicegame.security.model.Dto.RankingDto;
 import cat.dicegame.security.model.Dto.RollDto;
 import cat.dicegame.security.model.Entity.Player;
 import cat.dicegame.security.model.Entity.Role;
@@ -249,7 +250,7 @@ class DiceGameServiceImplemTest {
         verify(playerRepository, times(1)).findAll();
         assertEquals(playerServiceListDto.get(0).getName(), "PLAYERA");
         assertEquals(playerServiceListDto.size(), playersListDto.size());
-        assertThat(playerServiceListDto).isNotNull();
+        verify(playerRepository).findAll();
     }
 
     @Test
@@ -309,15 +310,41 @@ class DiceGameServiceImplemTest {
         Assert.assertEquals( "75.0",  playerDto.getAverageSuccessRateNumber().toString());
     }
 
-
     @Test
     //@Disabled
-    void getOveragesRankingOfAllPlayer() {
+    void getOveragesRankingOfAllPlayer() throws NoPlayersFoundRepositoryException {
+
+        // Create a PlayerDto object for testing
+        PlayerDto playerDto = new PlayerDto();
+
+        // Create a list of RollDto objects
+        List<RollDto> rollsListDto = new ArrayList<>();
+
+
+        // Add RollDto objects to the list
+        rollsListDto.add(new RollDto(1, 2, "WIN", new Date()));
+        rollsListDto.add(new RollDto(3, 4, "WIN", new Date()));
+        rollsListDto.add(new RollDto(5, 6, "LOSS",new Date()));
+        rollsListDto.add(new RollDto(2, 3, "WIN", new Date()));
+
+        // Set the rollsListDto in the playerDto
+        playerDto.setRollsList(rollsListDto);
+
+        // Call the method to test
+        RankingDto rankingDto= playerServiceImp.calculationOfSuccessAveragesOfAllPlayers(playerServiceImp.getAllPlayersInTheGameWithOverage());
+
+        // Assert the expected values
+        Assert.assertEquals("25.0", rankingDto.getOverageRankingAllPlayer().toString());
+
+
     }
 
     @Test
     @Disabled
     void getPlayerWithTheWorstLossRate() {
+
+
+
     }
 
     @Test
@@ -326,8 +353,20 @@ class DiceGameServiceImplemTest {
     }
 
     @Test
-    @Disabled
+    //@Disabled
     void convertListOfPlayerToListOfPLayerDTO() {
+        //given
+        when(playerRepository.findAll()).thenReturn(playersList);
+
+        //when
+        List<PlayerDto> playerConverted= playerServiceImp.convertListOfPlayerToListOfPLayerDTO();
+        // then
+
+        for (PlayerDto playerDto : playerConverted) {
+            Assert.assertEquals(PlayerDto.class, playerDto.getClass());
+        }
+        assertThat(playerConverted).getClass();
+        verify(playerRepository).findAll();
     }
 
     @Test
@@ -353,17 +392,48 @@ class DiceGameServiceImplemTest {
 
         //then
         assertEquals(true,playerFound);
-        //verify(playerRepository).findById(objectId);
+        verify(playerRepository).existsById(objectId);
 
     }
 
     @Test
-    @Disabled
+    //@Disabled
     void verifyPlayerName() {
+
+        //given
+        when(playerRepository.findAll()).thenReturn(playersList);
+
+        //when
+
+        Boolean nameFound = playerServiceImp.verifyPlayerName("PLAYERA");
+
+        //then
+        assertEquals(true,nameFound);
+        verify(playerRepository).findAll();
     }
 
     @Test
-    @Disabled
-    void getPlayerById() {
+    //@Disabled
+    void getPlayerById() throws ResourceNotFoundException {
+        ObjectId objectId = new ObjectId();
+
+        Player expectedPlayer = Player.builder()
+                .id(objectId)
+                .name("Anderson")
+                .email("andersonEmail@gmail.com")
+                .password("password")
+                .localDateTime(LocalDateTime.now())
+                .rollsList(new ArrayList<>())
+                .role(role).build();
+
+        when(playerRepository.findById(objectId)).thenReturn(Optional.of(expectedPlayer));
+
+        //  when
+        Player actualPlayerDto = playerServiceImp.getPlayerById(objectId);
+
+        // then
+
+        assertEquals(expectedPlayer, actualPlayerDto);
+        verify(playerRepository).findById(objectId);
     }
 }
