@@ -11,6 +11,7 @@ import cat.dicegame.security.model.Exceptions.NoPlayersFoundRepositoryException;
 import cat.dicegame.security.model.Exceptions.ResourceNotFoundException;
 import cat.dicegame.security.model.Repository.PlayerRepository;
 import org.bson.types.ObjectId;
+import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -89,6 +90,40 @@ class DiceGameServiceImplemTest {
 
     }
 
+    @DisplayName("TEST CONVERT ENTITY TO DTO")
+    @Test
+    void convertPlayerEntitytoDTOTest() {
+        //given
+        ObjectId objectId = new ObjectId();
+
+         playerA = Player.builder()
+                .id(objectId)
+                .name("Anderson")
+                .email("anderso_nemail@gmail.com")
+                .password("password")
+                .localDateTime(LocalDateTime.now())
+                .rollsList(new ArrayList<>())
+                .role(role).build();
+
+         //when
+
+        PlayerDto playerConverted = playerServiceImp.convertPlayerEntitytoDTO(playerA);
+
+        // then
+
+        assertThat(playerConverted).isNotNull();
+        assertThat(playerConverted, CoreMatchers.isA(PlayerDto.class));
+        assertEquals(playerConverted.getClass(), playerDtoA.getClass());
+
+
+
+    }
+
+    @Test
+    @DisplayName("TEST CONVERT DTO TO ENTITY ")
+    void convertPlayerDTOtoEntityTest() {
+
+    }
 
     @DisplayName("TEST TO CREATE A PLAYER")
     @Test
