@@ -5,6 +5,7 @@ import cat.dicegame.security.model.Dto.RankingDto;
 import cat.dicegame.security.model.Dto.RollDto;
 import cat.dicegame.security.model.Entity.Player;
 import cat.dicegame.security.model.Entity.Role;
+import cat.dicegame.security.model.Entity.Roll;
 import cat.dicegame.security.model.Exceptions.NameRepetitiveException;
 import cat.dicegame.security.model.Exceptions.NoPlayersFoundRepositoryException;
 import cat.dicegame.security.model.Exceptions.ResourceNotFoundException;
@@ -314,33 +315,34 @@ class DiceGameServiceImplemTest {
     //@Disabled
     void getOveragesRankingOfAllPlayer() throws NoPlayersFoundRepositoryException {
 
-        // Create a PlayerDto object for testing
-        PlayerDto playerDto = new PlayerDto();
+        //getting
 
-        // Create a list of RollDto objects
-        List<RollDto> rollsListDto = new ArrayList<>();
+        playerA.getRollsList().add(new Roll(1, 6, "WIN", new Date()));
+        playerA.getRollsList().add(new Roll(3, 4, "WIN", new Date()));
+
+        playerB.getRollsList().add(new Roll(5, 6, "LOSS",new Date()));
+        playerB.getRollsList().add(new Roll(2, 5, "WIN", new Date()));
 
 
-        // Add RollDto objects to the list
-        rollsListDto.add(new RollDto(1, 2, "WIN", new Date()));
-        rollsListDto.add(new RollDto(3, 4, "WIN", new Date()));
-        rollsListDto.add(new RollDto(5, 6, "LOSS",new Date()));
-        rollsListDto.add(new RollDto(2, 3, "WIN", new Date()));
+        when(playerRepository.findAll()).thenReturn(playersList);
 
-        // Set the rollsListDto in the playerDto
-        playerDto.setRollsList(rollsListDto);
+        //when
 
-        // Call the method to test
-        RankingDto rankingDto= playerServiceImp.calculationOfSuccessAveragesOfAllPlayers(playerServiceImp.getAllPlayersInTheGameWithOverage());
+
+        //List<PlayerDto> diceGameDtos = playerServiceImp.getAllPlayersInTheGameWithOverage();
+        RankingDto rankingDto= playerServiceImp.getOveragesRankingOfAllPlayer();
 
         // Assert the expected values
-        Assert.assertEquals("25.0", rankingDto.getOverageRankingAllPlayer().toString());
+        Assert.assertEquals("75.0", rankingDto.getOverageRankingAllPlayer().toString());
+        verify(playerRepository).findAll();
+
+
 
 
     }
 
     @Test
-    @Disabled
+    //@Disabled
     void getPlayerWithTheWorstLossRate() {
 
 
