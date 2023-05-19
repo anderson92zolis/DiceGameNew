@@ -328,30 +328,76 @@ class DiceGameServiceImplemTest {
 
         //when
 
-
-        //List<PlayerDto> diceGameDtos = playerServiceImp.getAllPlayersInTheGameWithOverage();
         RankingDto rankingDto= playerServiceImp.getOveragesRankingOfAllPlayer();
 
         // Assert the expected values
         Assert.assertEquals("75.0", rankingDto.getOverageRankingAllPlayer().toString());
         verify(playerRepository).findAll();
+    }
+
+    @Test
+    //@Disabled
+    void getPlayerWithTheWorstLossRate() throws NoPlayersFoundRepositoryException {
+        //getting
+
+        playerA.getRollsList().add(new Roll(1, 6, "WIN", new Date()));
+        playerA.getRollsList().add(new Roll(3, 4, "WIN", new Date()));
+
+        playerB.getRollsList().add(new Roll(5, 6, "LOSS",new Date()));
+        playerB.getRollsList().add(new Roll(2, 5, "WIN", new Date()));
 
 
+        when(playerRepository.findAll()).thenReturn(playersList);
 
+        //when
+
+        // method to test
+        RankingDto rankingDto= playerServiceImp.getPlayerWithTheWorstLossRate();
+        // method to convert entity to Dto
+
+        PlayerDto worstLossRatePlayer = playerServiceImp.convertPlayerEntitytoDTO(playerA);
+        // Knowing that player A is the worst loser Rate number
+        worstLossRatePlayer.setAverageSuccessRate("YOUR AVERAGE SUCCESS RATE IS 100.0%");
+        worstLossRatePlayer.setAverageSuccessRateNumber(100.0);
+        worstLossRatePlayer.setAverageLoserRateNumber(0.00);
+
+        // Assert the expected values
+        Assert.assertEquals(worstLossRatePlayer, rankingDto.getPlayerWithTheWorstLossPorcentage());
+        verify(playerRepository).findAll();
+        assertThat(rankingDto.getPlayerWithTheWorstLossPorcentage()).isNotNull();
 
     }
 
     @Test
     //@Disabled
-    void getPlayerWithTheWorstLossRate() {
+    void getPlayerWithTheWorstSuccessRate() throws NoPlayersFoundRepositoryException {
+        //getting
 
+        playerA.getRollsList().add(new Roll(1, 6, "WIN", new Date()));
+        playerA.getRollsList().add(new Roll(3, 4, "WIN", new Date()));
 
+        playerB.getRollsList().add(new Roll(5, 6, "LOSS",new Date()));
+        playerB.getRollsList().add(new Roll(2, 5, "WIN", new Date()));
 
-    }
+        when(playerRepository.findAll()).thenReturn(playersList);
 
-    @Test
-    @Disabled
-    void getPlayerWithTheWorstSuccessRate() {
+        //when
+
+        // method to test
+        RankingDto rankingDto= playerServiceImp.getPlayerWithTheWorstSuccessRate();
+        // method to convert entity to Dto
+
+        PlayerDto playerWorstSuccessRate = playerServiceImp.convertPlayerEntitytoDTO(playerB);
+        // Knowing that player A is the worst loser Rate number
+        playerWorstSuccessRate.setAverageSuccessRate("YOUR AVERAGE SUCCESS RATE IS 50.0%");
+        playerWorstSuccessRate.setAverageSuccessRateNumber(50.0);
+        playerWorstSuccessRate.setAverageLoserRateNumber(50.0);
+
+        // Assert the expected values
+        Assert.assertEquals(playerWorstSuccessRate, rankingDto.getPlayerWithTheWorstSuccessPorcentage());
+        verify(playerRepository).findAll();
+        assertThat(rankingDto.getPlayerWithTheWorstSuccessPorcentage()).isNotNull();
+
     }
 
     @Test
