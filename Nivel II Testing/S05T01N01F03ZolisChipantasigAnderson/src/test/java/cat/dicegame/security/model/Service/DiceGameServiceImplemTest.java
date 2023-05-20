@@ -58,7 +58,6 @@ class DiceGameServiceImplemTest {
     @BeforeEach
     void setUp() {
 
-
         playerA = new Player("PLAYERA");
         playerA.setEmail("aemail@gmail.com");
         playerA.setPassword("1");
@@ -419,6 +418,11 @@ class DiceGameServiceImplemTest {
         Assert.assertEquals("75.0", rankingDto.getOverageRankingAllPlayer().toString());
         verify(playerRepository).findAll();
     }
+
+    @Test
+    void setAverageSuccessRateAllPlayer() {
+    }
+
 
     @Test
     void calculationOfSuccessAveragesOfAllPlayersforRankingDtoTest() {

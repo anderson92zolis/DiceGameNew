@@ -43,6 +43,7 @@ public class AuthenticationService implements AuthenticationInterface{
                 .build();
 
         playerRepository.save(userPlayer);
+
         var jwtToken = jwtService.generateToken(userPlayer);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
