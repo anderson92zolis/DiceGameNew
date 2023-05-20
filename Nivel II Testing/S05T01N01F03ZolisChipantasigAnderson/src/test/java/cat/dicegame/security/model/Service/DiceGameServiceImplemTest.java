@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.type;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.willDoNothing;
@@ -112,7 +113,8 @@ class DiceGameServiceImplemTest {
         // then
 
         assertThat(playerConverted).isNotNull();
-        assertThat(playerConverted, CoreMatchers.isA(PlayerDto.class));
+
+        //assert playerConverted.getClass().equals(playerDtoA.getClass());
         assertEquals(playerConverted.getClass(), playerDtoA.getClass());
 
 
@@ -122,6 +124,17 @@ class DiceGameServiceImplemTest {
     @Test
     @DisplayName("TEST CONVERT DTO TO ENTITY ")
     void convertPlayerDTOtoEntityTest() {
+
+        //when
+
+        Player playerConverted = playerServiceImp.convertPlayerDTOtoEntity(playerDtoA);
+
+        // then
+
+        assertThat(playerConverted).isNotNull();
+
+        assertEquals(playerConverted.getClass(), playerA.getClass());
+
 
     }
 
