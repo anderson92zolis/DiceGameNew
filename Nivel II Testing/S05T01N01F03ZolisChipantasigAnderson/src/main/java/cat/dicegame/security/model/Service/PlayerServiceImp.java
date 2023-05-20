@@ -151,8 +151,6 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, GamesInterfac
         Player player = convertPlayerDTOtoEntity(diceGameDto);
         player.deleteRolls();
         playerRepository.save(player);
-
-
     }
 
     /**
@@ -281,7 +279,7 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, GamesInterfac
     @Override
     public RankingDto getOveragesRankingOfAllPlayer()  {
 
-        return calculationOfSuccessAveragesOfAllPlayers(setAverageSuccessRateAllPlayer(convertListOfPlayerToListOfPLayerDTO(
+        return calculationOfSuccessAveragesOfAllPlayersforRankingDto(setAverageSuccessRateAllPlayer(convertListOfPlayerToListOfPLayerDTO(
 
         )));
     }
@@ -292,7 +290,7 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, GamesInterfac
      * @param playerDtoList list of player data transfer objects to calculate the ranking for
      * @return ranking data transfer object containing the average success ranking
      */
-    public RankingDto calculationOfSuccessAveragesOfAllPlayers(List<PlayerDto> playerDtoList) {
+    public RankingDto calculationOfSuccessAveragesOfAllPlayersforRankingDto(List<PlayerDto> playerDtoList) {
 
         Double sumOfPlayerThatHavePlayedSuccessRanking = 0.0;
         Double averageSuccessRanking = 0.0;

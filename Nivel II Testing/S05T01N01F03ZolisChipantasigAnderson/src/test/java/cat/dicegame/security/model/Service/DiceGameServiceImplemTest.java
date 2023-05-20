@@ -19,6 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -153,7 +154,9 @@ class DiceGameServiceImplemTest {
     }
 
     @Test
+    @DisplayName("TEST UPDATE A PLAYER")
         //@Disabled
+
     void updatePlayerTest() throws NameRepetitiveException, ResourceNotFoundException {
 
         //given
@@ -168,26 +171,65 @@ class DiceGameServiceImplemTest {
                 .rollsList(new ArrayList<>())
                 .role(role).build();
 
-
-        //playerRepository.save(expectedPlayer);
-
         when(playerRepository.existsById(objectId)).thenReturn(true);
         when(playerRepository.findById(objectId)).thenReturn(Optional.ofNullable(expectedPlayer));
         when(playerRepository.save(any())).thenReturn(expectedPlayer);
-        //when(playerRepository.findById(objectId)).thenReturn(Optional.of(expectedPlayer));
-
-        //expectedPlayer.setName("UpdatedPlayer");
 
         //when
-        //PlayerDto playertoDto = playerServiceImp.convertPlayerEntitytoDTO(expectedPlayer);
+
         PlayerDto playertoDto = new PlayerDto("UpdatedPlayer");
 
         PlayerDto playerAUpdatedDto = playerServiceImp.updatePlayer(expectedPlayer.getId(), playertoDto);
 
         //then
         assertEquals("UpdatedPlayer", playerAUpdatedDto.getName());
-        //verify(playerRepository).findById(objectId);
+        verify(playerRepository).existsById(objectId);
     }
+
+    @Test
+    @DisplayName("TEST DELETE THE ROLLS OF A PLAYER")
+    //@Disabled
+    void deleteRollsofAPlayerTest() throws ResourceNotFoundException {
+        //given
+        ObjectId objectId = new ObjectId();
+
+        List<Roll> rollsList = new ArrayList<>();
+
+        // Add RollDto objects to the list
+        rollsList.add(new Roll(1, 2, "WIN", new Date()));
+        rollsList.add(new Roll(3, 4, "WIN", new Date()));
+        rollsList.add(new Roll(5, 6, "LOSS", new Date()));
+        rollsList.add(new Roll(2, 3, "WIN", new Date()));
+
+        Player expectedPlayer = Player.builder()
+                .id(objectId)
+                .name("Anderson")
+                .email("anderso_nemail@gmail.com")
+                .password("password")
+                .localDateTime(LocalDateTime.now())
+                .rollsList(rollsList)
+                .role(role).build();
+
+       when(playerRepository.existsById(objectId)).thenReturn(true);
+
+       when(playerRepository.findById(objectId)).thenReturn(Optional.ofNullable(expectedPlayer));
+
+        expectedPlayer.deleteRolls();
+        when(playerRepository.save(any())).thenReturn(expectedPlayer);
+
+        //when
+
+        // delete Rolls
+        playerServiceImp.deleteRollsofAPlayer(objectId);
+
+        //then
+        assertEquals(0 , expectedPlayer.getRollsList().size());
+        assertThat(expectedPlayer.getRollsList().size()).isNotNull();
+        verify(playerRepository).findById(objectId);
+
+    }
+
+
 
     @Test
         //@Disabled
@@ -219,11 +261,6 @@ class DiceGameServiceImplemTest {
         assertEquals(3, expectedPlayerWithRoll.getRollsList().size());
         assertThat(expectedPlayerWithRoll.getRollsList().size()).isNotNull();
 
-    }
-
-    @Test
-        //@Disabled
-    void deleteRollsofAPlayerTest() {
     }
 
     @Test
@@ -279,7 +316,7 @@ class DiceGameServiceImplemTest {
     }
     @Test
         //@Disabled
-    void getAllUsersInTheGameTest() throws NoSuchElementException, NoPlayersFoundRepositoryException {
+    void getAllPlayersInTheGameWithOverageTest() throws NoSuchElementException, NoPlayersFoundRepositoryException {
         //given
 
         playerRepository.save(playerA);
@@ -304,7 +341,7 @@ class DiceGameServiceImplemTest {
 
     @Test
         //@Disabled
-    void getPlayerDtoByIdWithOverage() throws ResourceNotFoundException {
+    void getPlayerDtoByIdWithOverageTest() throws ResourceNotFoundException {
         // create a new ObjectId
 
         ObjectId objectId = new ObjectId();
@@ -361,7 +398,7 @@ class DiceGameServiceImplemTest {
 
     @Test
     //@Disabled
-    void getOveragesRankingOfAllPlayer() throws NoPlayersFoundRepositoryException {
+    void getOveragesRankingOfAllPlayerTest() throws NoPlayersFoundRepositoryException {
 
         //getting
 
@@ -384,6 +421,31 @@ class DiceGameServiceImplemTest {
     }
 
     @Test
+    void calculationOfSuccessAveragesOfAllPlayersforRankingDtoTest() {
+        //getting
+
+        playerA.getRollsList().add(new Roll(1, 6, "WIN", new Date()));
+        playerA.getRollsList().add(new Roll(3, 4, "WIN", new Date()));
+
+        playerB.getRollsList().add(new Roll(5, 6, "LOSS",new Date()));
+        playerB.getRollsList().add(new Roll(2, 5, "WIN", new Date()));
+
+        when(playerRepository.findAll()).thenReturn(playersList);
+
+        //when
+
+        playersListDto= playerServiceImp.convertListOfPlayerToListOfPLayerDTO();
+
+        playersListDto= playerServiceImp.setAverageSuccessRateAllPlayer(playersListDto);
+
+        RankingDto rankingDto= playerServiceImp.calculationOfSuccessAveragesOfAllPlayersforRankingDto(playersListDto);
+
+        // Assert the expected values
+        Assert.assertEquals("75.0", rankingDto.getOverageRankingAllPlayer().toString());
+        verify(playerRepository).findAll();
+
+    }
+    @Test
     //@Disabled
     void getPlayerWithTheWorstLossRate() throws NoPlayersFoundRepositoryException {
         //getting
@@ -393,7 +455,6 @@ class DiceGameServiceImplemTest {
 
         playerB.getRollsList().add(new Roll(5, 6, "LOSS",new Date()));
         playerB.getRollsList().add(new Roll(2, 5, "WIN", new Date()));
-
 
         when(playerRepository.findAll()).thenReturn(playersList);
 
