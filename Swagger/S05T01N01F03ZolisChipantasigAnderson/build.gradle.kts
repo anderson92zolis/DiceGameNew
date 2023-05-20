@@ -40,6 +40,16 @@ dependencies {
 	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5") //JWT LIBRARY
 	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5") //JWT LIBRARY
 
+	//swagger
+
+	implementation("io.swagger.core.v3:swagger-annotations:2.2.8")
+
+
+	implementation("io.springfox:springfox-swagger2:3.0.0")
+	implementation("io.springfox:springfox-swagger-ui:3.0.0")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4") //OPEN API AMB SWAGGER PER SPRING MVC
+
+
 	// https://www.baeldung.com/mockito-junit-5-extension
 
 	// JUnit 5 dependencies

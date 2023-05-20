@@ -9,6 +9,10 @@ import cat.dicegame.security.model.Exceptions.NoPlayersFoundRepositoryException;
 import cat.dicegame.security.model.Exceptions.ResourceNotFoundException;
 import cat.dicegame.security.model.Message.Message;
 import cat.dicegame.security.model.Service.PlayerServiceImp;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +24,7 @@ import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/v1/players")
+@Tag(name = "Dice Management System", description = "CRUD operations from  DICEGAMEJWT MONGODB")
 public class DiceGameController {
 
     private final PlayerServiceImp playerServiceImp;
@@ -76,6 +81,12 @@ public class DiceGameController {
      * <p>
      * ResponseEntity<PlayerDto>: the updated PlayerDto object, along with an HTTP status code. If the update was successful, the status code will be 200 (OK). If the update failed due to a NameRepetitiveException or ResourceNotFoundException, the status code will be 404 (Not Found).
      */
+    @Operation(summary = "UPDATE",
+            description = "update a Name of a player from the database")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "SUCCESSFULLY UPDATED Player"),
+            @ApiResponse(responseCode = "404", description = "PLAYER NOT FOUND, NOT FOUND WITH ID : 'X'")
+    })
     @PutMapping("/{id}")
     public ResponseEntity<PlayerDto> updatePlayer(@PathVariable ObjectId id, @RequestBody PlayerDto playerDtoRequest) {
 

@@ -2,6 +2,10 @@ package cat.dicegame.security.auth;
 
 
 import cat.dicegame.security.model.Message.Message;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +17,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
+@Tag(name = "Dice Management System", description = "CRUD operations from  DICEGAMEJWT MONGODB")
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
 
+    //Add a new user
+    @Operation(summary = "ADD", description = "Add a FLOWER to the database")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "SUCCESSFULLY ADDED FLOWER"),
+            @ApiResponse(responseCode = "400", description = "ERROR. THE NAME IS REQUIRED."),
+            @ApiResponse(responseCode = "400", description = "ERROR. THE COUNTRY IS REQUIRED."),
+    })
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
             @RequestBody RegisterRequest request
