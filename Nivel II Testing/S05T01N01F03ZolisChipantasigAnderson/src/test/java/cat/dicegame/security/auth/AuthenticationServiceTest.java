@@ -53,7 +53,7 @@ class AuthenticationServiceTest {
 
     @BeforeEach
     public void setUp() {
-
+        // Create a Player object
          player = Player.builder()
                 .name("A")
                 .email("a@gmail.com")
@@ -68,8 +68,10 @@ class AuthenticationServiceTest {
                 .password("password")
                 .build();
 
+        // Create an UsernamePasswordAuthenticationToken object
         userPassAuthToken = new UsernamePasswordAuthenticationToken(regRequest.getEmail(), regRequest.getPassword());
 
+        // Create an AuthenticationRequest object
         authRequest = new AuthenticationRequest(regRequest.getEmail(),regRequest.getPassword());
     }
 
@@ -81,7 +83,6 @@ class AuthenticationServiceTest {
         when(jwtService.generateToken(any())).thenReturn("jwtToken");
         // Mock the playerRepository.save() method
         when(playerRepository.save(any())).thenReturn(player);
-
         when(passwordEncoder.encode(any())).thenReturn(regRequest.getPassword());
 
         //when
@@ -101,26 +102,22 @@ class AuthenticationServiceTest {
 
     @Test
     public void authenticateTest() {
-        // Create an AuthenticationRequest object
-        AuthenticationRequest request = new AuthenticationRequest();
-        request.setEmail("john@example.com");
-        request.setPassword("password");
-
+        //given
         // Mock the behavior of the dependencies
         when(jwtService.generateToken(any())).thenReturn("jwtToken");
-
         // Mock the playerRepository.findByEmail() method
-        Player user = new Player();
-        when(playerRepository.findByEmail("john@example.com")).thenReturn(Optional.of(user));
-
+        when(playerRepository.findByEmail("a@gmail.com")).thenReturn(Optional.of(player));
         // Call the authenticate() method
-        AuthenticationResponse response = authenticationService.authenticate(request);
+        when(authenticationManager.authenticate(any())).thenReturn(userPassAuthToken);
+        //when
+        AuthenticationResponse response = authenticationService.authenticate(authRequest);
 
+        //then
         // Verify the expected behavior
         assertNotNull(response);
         assertEquals("jwtToken", response.getToken());
-        verify(jwtService).generateToken(user);
-        verify(playerRepository).findByEmail("john@example.com");
+        verify(jwtService).generateToken(player);
+        verify(playerRepository).findByEmail("a@gmail.com");
     }
 
     @Test
