@@ -2,6 +2,7 @@ package cat.dicegame.security.auth;
 
 
 import cat.dicegame.security.model.Message.Message;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -44,6 +45,12 @@ public class AuthenticationController {
         }
     }
 
+    @Operation(summary = "ADD", description = "Add a FLOWER to the database")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "SUCCESSFULLY ADDED FLOWER"),
+            @ApiResponse(responseCode = "400", description = "ERROR. THE NAME IS REQUIRED."),
+            @ApiResponse(responseCode = "400", description = "ERROR. THE COUNTRY IS REQUIRED."),
+    })
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request

@@ -17,6 +17,9 @@ import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 @RequiredArgsConstructor
 public class SecurityConfiguration {
 
+    // To confing swagger:  : https://www.bezkoder.com/spring-boot-jwt-auth-mongodb/#With_WebSecurityConfigurerAdapter
+    // .anyRequest()
+    // .authenticated()    //remove this to see the Swagger interface
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
 
@@ -26,10 +29,11 @@ public class SecurityConfiguration {
                 .csrf()
                 .disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/v1/auth/**")
+                .requestMatchers("/api/v1/auth/**","/swagger-ui/index.html/**")
                 .permitAll()
-                .anyRequest()
-                .authenticated()
+                .anyRequest().permitAll()
+                // .anyRequest()
+                // .authenticated()    //remove this to see the Swagger interface
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

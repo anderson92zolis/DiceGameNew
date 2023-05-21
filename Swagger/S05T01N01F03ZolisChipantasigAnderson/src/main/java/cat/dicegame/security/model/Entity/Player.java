@@ -1,7 +1,6 @@
 package cat.dicegame.security.model.Entity;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
@@ -21,18 +20,21 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection = "Players")
-@ApiModel(description = "Details of a Player")
 public class Player implements UserDetails {
 
     @Id
-    @ApiModelProperty(notes = "ID unique for a player")
+    @Schema(description = "ID unique for a player",example = "64673962a24a8e7535f3c442")
     private ObjectId id;
+
+
     @Field("name")
+    @Schema(description = "Username of the player", example = "Anderson")
     private String name;
     @Field("email")
     private String email;

@@ -9,7 +9,6 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class })
-@OpenAPIDefinition(info = @Info(title = "DICEGAME API", version = "3.0.0", description = "Documentation RESTful API"))
 public class S05T01N01F03ZolisChipantasigAndersonApplication {
 	@Bean
 	public ModelMapper modelMapper() {

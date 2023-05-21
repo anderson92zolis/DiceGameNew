@@ -24,6 +24,9 @@ dependencies {
 
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.security:spring-security-config:6.0.2")
+	implementation("org.springframework.security:spring-security-config:6.0.2")
+	implementation("org.springframework.security:spring-security-config:6.0.2")
 
 	testImplementation("junit:junit:4.13.1")
 	compileOnly("org.projectlombok:lombok")
@@ -40,29 +43,28 @@ dependencies {
 	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5") //JWT LIBRARY
 	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5") //JWT LIBRARY
 
+	// 5.1 dependencies
+
+	//implementation("io.springfox:springfox-swagger2:3.0.0")
+	//implementation("io.springfox:springfox-swagger-ui:3.0.0")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4") //OPEN API AMB SWAGGER PER SPRING MVC
+
 	//swagger
-
+	/*
 	implementation("io.swagger.core.v3:swagger-annotations:2.2.8")
-
 
 	implementation("io.springfox:springfox-swagger2:3.0.0")
 	implementation("io.springfox:springfox-swagger-ui:3.0.0")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4") //OPEN API AMB SWAGGER PER SPRING MVC
+
+	 */
+
 
 
 	// https://www.baeldung.com/mockito-junit-5-extension
 
 	// JUnit 5 dependencies
 	testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.2")
-	//testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
-
-	// Mockito dependencies
-	//testImplementation("org.mockito:mockito-core:4.6.1")
-	//testImplementation("org.mockito.kotlin:mockito-kotlin:3.2.0")
-
-	// AssertJ
-	//testImplementation("org.assertj:assertj-core:3.21.0")
-
 
 
 	//ModelMapper
