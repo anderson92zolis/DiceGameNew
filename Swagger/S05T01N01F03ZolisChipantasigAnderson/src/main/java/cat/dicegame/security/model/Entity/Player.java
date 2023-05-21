@@ -3,6 +3,8 @@ package cat.dicegame.security.model.Entity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,15 +36,27 @@ public class Player implements UserDetails {
 
 
     @Field("name")
-    @Schema(description = "Username of the player", example = "Anderson")
+    @Schema(description = "Name of the player", example = "Anderson")
     private String name;
+
+    @Email
+    @NotBlank
     @Field("email")
+    @Schema(description = "Email of the player", example = "ander@gmail.com")
     private String email;
+
+    @NotBlank
     @Field("password")
+    @Schema(description = "Password of the player", example = "password")
     private String password;
+
+
     @Field("localDateTime")
+    @Schema(description = "Registration date of the player", example = "2023-05-21T10:11:03.156+00:00")
     private LocalDateTime localDateTime;
+
     @Field("rollsList")
+    @Schema(description = "Player's roll")
     private List<Roll> rollsList;
 
 
@@ -63,6 +77,8 @@ public class Player implements UserDetails {
 
     // SECURITY PART
 
+    @Field(name = "role")
+    @Schema(description = "Role playerr", example = "USER")
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -102,7 +118,6 @@ public class Player implements UserDetails {
         return true;
     }
 }
-
 
 /* HERE THE LINK TO DO THE PROJECT
 
