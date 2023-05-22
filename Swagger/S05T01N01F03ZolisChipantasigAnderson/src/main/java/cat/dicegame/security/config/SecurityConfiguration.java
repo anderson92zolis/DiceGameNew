@@ -1,6 +1,5 @@
 package cat.dicegame.security.config;
 
-import jakarta.servlet.Filter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +9,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 
 @Configuration
 @EnableWebSecurity
@@ -23,24 +21,24 @@ public class SecurityConfiguration {
     private final AuthenticationProvider authenticationProvider;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity
                 .csrf()
                 .disable()
-                .authorizeHttpRequests()
+                .authorizeHttpRequests() // if  some endpoint need Authorize
                 .requestMatchers("/api/v1/auth/**","/swagger-ui/index.html/**")
                 .permitAll()
                 .anyRequest().permitAll()
                 // .anyRequest()
                 // .authenticated()    //remove this to see the Swagger interface
-                .and()
+                .and() //new configuration
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) //
                 .and()
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
-    return http.build();
+    return httpSecurity.build();
     }
 
 

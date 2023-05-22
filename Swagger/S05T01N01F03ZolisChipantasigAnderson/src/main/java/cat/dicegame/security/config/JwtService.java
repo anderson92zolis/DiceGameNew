@@ -21,7 +21,7 @@ public class JwtService {
     private static final String SECRET_KEY="635266556A586E3272357538782F413F442A472D4B6150645367566B59703373";
 
     public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
+        return extractClaim(token, Claims::getSubject); // get subject okay so because as I mentioned  before the subject is or should be the email o surname
     }
 
     private Claims extractAllClaims(String token) {
@@ -62,21 +62,21 @@ public class JwtService {
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() +1000*60*24))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
-                .compact();
+                .compact();  // generate and return the token
     }
 
-    public boolean isTokenValid(String token, UserDetails userDetails) {
+    public boolean isTokenValid(String token, UserDetails userDetails) {   // validate is the token belong to a player
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
 
-    private boolean isTokenExpired(String token) {
+    private boolean isTokenExpired(String token) {   //verify it the token is expire
         return extractExpiration(token).before(new Date());
     }
 
 
     private Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
+        return extractClaim(token, Claims::getExpiration); // extract the expiration date
     }
 
 

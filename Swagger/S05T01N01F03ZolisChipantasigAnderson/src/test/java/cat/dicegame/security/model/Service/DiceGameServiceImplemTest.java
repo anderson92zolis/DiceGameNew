@@ -394,7 +394,7 @@ class DiceGameServiceImplemTest {
 
     @Test
     //@Disabled
-    void getOveragesRankingOfAllPlayerTest() throws NoPlayersFoundRepositoryException {
+    void getOveragesRankingOfAllPlayerTest() {
 
         //getting
 
@@ -448,7 +448,7 @@ class DiceGameServiceImplemTest {
     }
     @Test
     //@Disabled
-    void getPlayerWithTheWorstLossRate() throws NoPlayersFoundRepositoryException {
+    void getPlayerWithTheWorstLossRate() {
         //getting
 
         playerA.getRollsList().add(new Roll(1, 6, "WIN", new Date()));
@@ -480,7 +480,7 @@ class DiceGameServiceImplemTest {
 
     @Test
     //@Disabled
-    void getPlayerWithTheWorstSuccessRate() throws NoPlayersFoundRepositoryException {
+    void getPlayerWithTheWorstSuccessRate()  {
         //getting
 
         playerA.getRollsList().add(new Roll(1, 6, "WIN", new Date()));

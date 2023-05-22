@@ -24,41 +24,44 @@ import java.util.List;
 
 
 @Data
-@Builder
+@Builder  // build a object in a easy way using the DESIGN PATTER BUILDER
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection = "Players")
 public class Player implements UserDetails {
 
     @Id
-    @Schema(description = "ID unique for a player",example = "64673962a24a8e7535f3c442")
+    @Schema(description = "ID UNIQUE FOR A PLAYER", example = "64673962a24a8e7535f3c442")
     private ObjectId id;
 
 
     @Field("name")
-    @Schema(description = "Name of the player", example = "Anderson")
+    @Schema(description = "NAME OF THE PLAYER", example = "Anderson")
     private String name;
 
     @Email
     @NotBlank
     @Field("email")
-    @Schema(description = "Email of the player", example = "ander@gmail.com")
+    @Schema(description = "EMAIL OF THE PLAYER", example = "ander@gmail.com")
     private String email;
 
     @NotBlank
     @Field("password")
-    @Schema(description = "Password of the player", example = "password")
+    @Schema(description = "PASSWORD OF THE PLAYER", example = "password")
     private String password;
 
 
     @Field("localDateTime")
-    @Schema(description = "Registration date of the player", example = "2023-05-21T10:11:03.156+00:00")
+    @Schema(description = "REGISTRATION DATE OF THE PLAYER", example = "2023-05-21T10:11:03.156+00:00")
     private LocalDateTime localDateTime;
 
     @Field("rollsList")
     @Schema(description = "Player's roll")
     private List<Roll> rollsList;
-
+    @Field(name = "role")
+    @Schema(description = "ROLE PLAYER", example = "USER")
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     //CONSTRUCTOR
     public Player(String name) {
@@ -71,20 +74,18 @@ public class Player implements UserDetails {
         rollsList.add(roll);
     }
 
+    // SECURITY PART
+
     public void deleteRolls() {
         rollsList.clear();
     }
 
-    // SECURITY PART
-
-    @Field(name = "role")
-    @Schema(description = "Role playerr", example = "USER")
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
+        /* Granted Authority okay so the object that I want  to return is called Simple granted Authority and
+        31:44 here I want to return the role.name okay()  so the role is referencing this role right here
+         */
     }
 
     @Override

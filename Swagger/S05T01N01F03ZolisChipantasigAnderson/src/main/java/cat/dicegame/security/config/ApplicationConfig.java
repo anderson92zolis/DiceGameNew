@@ -24,11 +24,11 @@ public class ApplicationConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> playerRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("USER NOT FOUND"));
+                .orElseThrow(() -> new UsernameNotFoundException("USER NOT FOUND FROM AUTH"));
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider() {
+    public AuthenticationProvider authenticationProvider() {  //  Data Access Object
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService());
         authProvider.setPasswordEncoder(passwordEncoder());
@@ -38,6 +38,9 @@ public class ApplicationConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
+        /* I will call it authentication manager and within  this mean I want to inject an object  of type authentication configuration
+            1:39:55, and I will call it config this authentication  configuration hold already the information about 1:40:04 the authentication manager so I will just return  config.getAuthenticationManager() all right
+         */
     }
 
     @Bean

@@ -36,7 +36,7 @@ public class AuthenticationService implements AuthenticationInterface{
         var userPlayer = Player.builder()
                 .name(namePlayerDtoRequest)
                 .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
+                .password(passwordEncoder.encode(request.getPassword()))  // encode before to save in DB
                 .role(Role.USER)
                 .localDateTime(LocalDateTime.now())
                 .rollsList(new ArrayList<>())
@@ -59,12 +59,11 @@ public class AuthenticationService implements AuthenticationInterface{
                 )
         );
 
+        var userPlayer = playerRepository.findByEmail(request.getEmail())
+                .orElseThrow(); // TRY TO CATCH THE RIGHT EXCEPTION 1.54.50
 
-        var user = playerRepository.findByEmail(request.getEmail())
-                .orElseThrow();
 
-
-        var jwtToken = jwtService.generateToken(user);
+        var jwtToken = jwtService.generateToken(userPlayer);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
