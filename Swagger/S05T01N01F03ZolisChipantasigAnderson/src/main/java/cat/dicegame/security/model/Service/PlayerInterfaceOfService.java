@@ -29,9 +29,9 @@ public interface PlayerInterfaceOfService {
 
     RankingDto getOveragesRankingOfAllPlayer() ;
 
-    RankingDto getPlayerWithTheWorstLossRate() throws NoPlayersFoundRepositoryException;
+    RankingDto getPlayerWithTheWorstLossRate()  ;
 
-    RankingDto getPlayerWithTheWorstSuccessRate() throws NoPlayersFoundRepositoryException;
+    RankingDto getPlayerWithTheWorstSuccessRate() ;
 
 
     // METHODS OF VERIFICATION WITH ID AND NAME OF THE PLAYER

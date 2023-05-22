@@ -167,6 +167,7 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, GamesInterfac
     @Override
     public List<Player> getAllPlayersFromDB() {
 
+
         List<Player> playersInDB = playerRepository.findAll();
         return playersInDB;
     }
@@ -181,26 +182,15 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, GamesInterfac
     @Override
     public List<PlayerDto> getAllPlayersInTheGameWithOverage() throws NoPlayersFoundRepositoryException {
 
-        /*
+
         List<PlayerDto> listPlayerDto = convertListOfPlayerToListOfPLayerDTO();
 
         setAverageSuccessRateAllPlayer(listPlayerDto); // PUT THE OVERAGES OF THE PLAYERS
 
-        return listPlayerDto;
-
-        */
-
-        try {
-
-            List<PlayerDto> listPlayerDto = convertListOfPlayerToListOfPLayerDTO();
-
-            setAverageSuccessRateAllPlayer(listPlayerDto); // PUT THE OVERAGES OF THE PLAYERS
-
+        if(listPlayerDto.size()!= 0) {
             return listPlayerDto;
-
-        } catch (Exception e) {
-            // Handle any specific exceptions related to the repository here
-            throw new NoPlayersFoundRepositoryException("FAILED TO RETRIEVE PLAYERS FROM THE DATABASE!" + e.getMessage());
+        } else {
+            throw new NoPlayersFoundRepositoryException("FAILED TO RETRIEVE PLAYERS, NO PLAYERS IN DATABASE!");
         }
 
     }
@@ -277,7 +267,7 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, GamesInterfac
      * The purpose of the method is to calculate the average success rate of all players, rank them based on their success rate, and return a RankingDto object containing the ranked list of players.
      */
     @Override
-    public RankingDto getOveragesRankingOfAllPlayer()  {
+    public RankingDto getOveragesRankingOfAllPlayer() {
 
         return calculationOfSuccessAveragesOfAllPlayersforRankingDto(setAverageSuccessRateAllPlayer(convertListOfPlayerToListOfPLayerDTO(
 
@@ -319,9 +309,13 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, GamesInterfac
      * @return a RankingDto containing the player with the worst loss rate.
      */
     @Override
-    public RankingDto getPlayerWithTheWorstLossRate() throws NoPlayersFoundRepositoryException {
+    public RankingDto getPlayerWithTheWorstLossRate() {
 
-        return worstLoserRateMethod(setAverageSuccessRateAllPlayer(getAllPlayersInTheGameWithOverage()));
+        try {
+            return worstLoserRateMethod(setAverageSuccessRateAllPlayer(getAllPlayersInTheGameWithOverage()));
+        } catch (NoPlayersFoundRepositoryException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -356,9 +350,13 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, GamesInterfac
      */
 
     @Override
-    public RankingDto getPlayerWithTheWorstSuccessRate() throws NoPlayersFoundRepositoryException {
+    public RankingDto getPlayerWithTheWorstSuccessRate() {
 
-        return worstSuccessRateMethod(setAverageSuccessRateAllPlayer(getAllPlayersInTheGameWithOverage()));
+        try {
+            return worstSuccessRateMethod(setAverageSuccessRateAllPlayer(getAllPlayersInTheGameWithOverage()));
+        } catch (NoPlayersFoundRepositoryException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -400,8 +398,7 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, GamesInterfac
      *
      * @return A List of PlayerDto objects representing all the Player entities in the database.
      */
-    public List<PlayerDto> convertListOfPlayerToListOfPLayerDTO()  {
-
+    public List<PlayerDto> convertListOfPlayerToListOfPLayerDTO() {
 
         List<Player> listPlayer = getAllPlayersFromDB();
 
@@ -413,17 +410,10 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, GamesInterfac
     }
 
     @Override
-    public Boolean exitsById(ObjectId id){
+    public Boolean exitsById(ObjectId id) {
 
         return playerRepository.existsById(id);
 
-        /*
-        if (!playerRepository.existsById(id)) {
-            throw new ResourceNotFoundException("PLAYER NOT FOUND WITH ID: " + id);
-        }
-        return true;
-
-         */
     }
 
     @Override

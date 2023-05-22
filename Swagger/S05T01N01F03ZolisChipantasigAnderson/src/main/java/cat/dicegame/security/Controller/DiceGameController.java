@@ -1,16 +1,15 @@
 package cat.dicegame.security.Controller;
 
 
-
 import cat.dicegame.security.model.Dto.PlayerDto;
 import cat.dicegame.security.model.Dto.RankingDto;
-import cat.dicegame.security.model.Dto.RollDto;
 import cat.dicegame.security.model.Exceptions.NameRepetitiveException;
 import cat.dicegame.security.model.Exceptions.NoPlayersFoundRepositoryException;
 import cat.dicegame.security.model.Exceptions.ResourceNotFoundException;
 import cat.dicegame.security.model.Message.Message;
 import cat.dicegame.security.model.Service.PlayerServiceImp;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,13 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -64,13 +56,13 @@ public class DiceGameController {
     @Operation(summary = "UPDATE",
             description = "UPDATE A NAME OF A PLAYER FROM THE DATABASE")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "THE NAME ALREADY EXISTS IN THE DATABASE",content = {@Content(mediaType = "application/json",
+            @ApiResponse(responseCode = "200", description = "THE NAME ALREADY EXISTS IN THE DATABASE", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = Message.class))}),
-            @ApiResponse(responseCode = "201", description = "SUCCESSFULLY UPDATED PLAYER",content = {@Content(mediaType = "application/json",
+            @ApiResponse(responseCode = "201", description = "SUCCESSFULLY UPDATED PLAYER", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = PlayerDto.class))}),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = Message.class))}),
-            @ApiResponse(responseCode = "404", description = "PLAYER WITH ID X NOT FOUND",content = {@Content(mediaType = "application/json",
+            @ApiResponse(responseCode = "404", description = "PLAYER WITH ID X NOT FOUND", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = Message.class))}),
             @ApiResponse(responseCode = "500", description = "Internal Server Error while updating the player", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = Message.class))})})
@@ -119,7 +111,7 @@ public class DiceGameController {
                     responseCode = "500",
                     description = "Internal Server Error while creating a roll",
                     content = {@Content(mediaType = "application/json",
-                    schema = @Schema(implementation = Message.class))})
+                            schema = @Schema(implementation = Message.class))})
 
     })
     @PostMapping("/{id}/games/")
@@ -177,7 +169,6 @@ public class DiceGameController {
     }
 
 
-
     /**
      * Endpoint: DELETE /delete/{id}:
      * Deletes a player with the specified ID.
@@ -216,37 +207,57 @@ public class DiceGameController {
      * Endpoint: GET /
      * Retrieves all players in the system with their average success rate.
      *
-     * @return a ResponseEntity object containing a list of PlayerDto objects with status code 200 (OK) if the request is successful.
-     * If there are no players in the game, returns a ResponseEntity object with a custom header "Custom-Header" and a message "THERE IS NOT PLAYER IN THE DICEGAME" with status code 200 (OK).
+     * @return a ResponseEntity object containing a list of PlayerDto objects with status code 201 (OK) if the request is successful.
+     * If there are no players in the game, returns a ResponseEntity object with a message "THERE IS NOT PLAYER IN THE DICEGAME" with status code 200 (OK).
      * If an error occurs, returns a ResponseEntity object with status code 500 (INTERNAL_SERVER_ERROR).
-     * @throws NoSuchElementException if the list of players returned by the getAllUsersInTheGame method is empty.
-     */
+     * */
 
+    @Operation(summary = "Get all players",
+            description = "Retrieve all players in the game")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "SUCCESSFULLY RETRIEVED PLAYERS",
+                    content = {@Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = PlayerDto.class)))}),
+            @ApiResponse(responseCode = "200", description = "NO PLAYERS FOUND",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Message.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content)
+    })
     @GetMapping("/")
     public ResponseEntity<?> getAllPlayers() {
-
         try {
             List<PlayerDto> listPlayerDto = playerServiceImp.getAllPlayersInTheGameWithOverage();
-
-            return new ResponseEntity<>(listPlayerDto, HttpStatus.OK);
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.ok().header("Custom-Header", "DICEGAME").body("THERE IS NOT PLAYER IN THE **DICEGAME**");
-            //return new ResponseEntity<>(new Message(e.getMessage()), HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(listPlayerDto, HttpStatus.CREATED);
+        } catch (NoPlayersFoundRepositoryException e) {
+            return new ResponseEntity<>(new Message(e.getMessage()), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
 
 
-    // GET /players/{id}/games: returns the list of games played by a player.
-
     /**
+     * Endpoint: GET /{id}/games
      * Retrieves a player's information by ID along with their roll history and overage.
+     *
      * @param id The ID of the player to retrieve.
      * @return A ResponseEntity containing a PlayerDto object representing the retrieved player, along with a HttpStatus of OK (200).
      * @throws ResourceNotFoundException If the player with the given ID does not exist in the database.
      */
+
+    @Operation(summary = "ROLL OF A PLAYER BY ID",
+            description = "RETURNS THE LIST OF PLAYS BY A PLAYER.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "SUCCESSFULLY RETRIEVED PLAYER",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PlayerDto.class))}),
+            @ApiResponse(responseCode = "404", description = "PLAYER NOT FOUND",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Message.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content)
+    })
     @GetMapping("/{id}/games")
     public ResponseEntity<PlayerDto> getPlayerById(@PathVariable(name = "id") ObjectId id) throws ResourceNotFoundException {
         if (playerServiceImp.exitsById(id)) {
@@ -257,9 +268,11 @@ public class DiceGameController {
         }
     }
 
-    // GET /players/ranking: returns the average ranking of all the players in the system. That is, the average percentage of successes.
+
 
     /**
+     *
+     *  // GET /players/ranking: returns the average ranking of all the players in the system. That is, the average percentage of successes.
      * The code is for a REST API endpoint that returns the overage ranking of all players in a DICE GAME.
      * It uses the @GetMapping annotation to specify the endpoint path.
      * The method calls the getAllUsersInTheGame() and getOverageRankingOfAllPlayer() methods from the diceGameServiceImplem instance to get the necessary data.
