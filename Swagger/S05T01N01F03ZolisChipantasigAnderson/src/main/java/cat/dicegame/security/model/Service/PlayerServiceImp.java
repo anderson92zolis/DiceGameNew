@@ -295,7 +295,7 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, GamesInterfac
                 averageSuccessRanking += playerDto.getAverageSuccessRateNumber();
                 sumOfPlayerThatHavePlayedSuccessRanking++;
             }
-            rankingDto.setOverageRankingAllPlayer(averageSuccessRanking / sumOfPlayerThatHavePlayedSuccessRanking);
+            rankingDto.setOverageRankingAllPlayers(averageSuccessRanking / sumOfPlayerThatHavePlayedSuccessRanking);
         }
 
         return rankingDto;

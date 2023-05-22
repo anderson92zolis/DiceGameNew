@@ -19,11 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
-@Tag(name = "Dice Management System", description = "API operations pertaining to Dice Game MongoDB security")
+@Tag(name = "DICE GAME MANAGEMENT SECURITY SYSTEM", description = "API OPERATIONS PERTAINING TO DICE GAME MONGODB SECURITY")
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
-
 
     /**
      * Endpoint: POST /register
@@ -35,7 +34,7 @@ public class AuthenticationController {
      * The method returns a ResponseEntity object containing the token generated and the appropriate HTTP status code.
      */
 
-    @Operation(summary = "Register a player", description = "register and add a player to the database")
+    @Operation(summary = "REGISTER A PLAYER", description = "REGISTER AND ADD A PLAYER TO THE DATABASE")
     @ApiResponses(value = {
 
             @ApiResponse(responseCode = "201", description = "SUCCESSFULLY REGISTERED",content = {@Content(mediaType = "application/json",
@@ -72,7 +71,7 @@ public class AuthenticationController {
      * @return ResponseEntity with the authentication response (Token) and the appropriate HTTP status code.
      */
 
-    @Operation(summary = "Authentication-Login", description = "Authenticate a user with the provided credentials")
+    @Operation(summary = "AUTHENTICATION-LOGIN", description = "AUTHENTICATE A USER WITH THE PROVIDED CREDENTIALS")
     @ApiResponses(value = {
 
             @ApiResponse(responseCode = "200", description = "TOKEN GENERATED",content = {@Content(mediaType = "application/json",

@@ -11,7 +11,6 @@ import cat.dicegame.security.model.Exceptions.NoPlayersFoundRepositoryException;
 import cat.dicegame.security.model.Exceptions.ResourceNotFoundException;
 import cat.dicegame.security.model.Repository.PlayerRepository;
 import org.bson.types.ObjectId;
-import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,13 +18,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.InstanceOfAssertFactories.type;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.willDoNothing;
@@ -415,7 +412,7 @@ class DiceGameServiceImplemTest {
         RankingDto rankingDto= playerServiceImp.getOveragesRankingOfAllPlayer();
 
         // Assert the expected values
-        Assert.assertEquals("75.0", rankingDto.getOverageRankingAllPlayer().toString());
+        Assert.assertEquals("75.0", rankingDto.getOverageRankingAllPlayers().toString());
         verify(playerRepository).findAll();
     }
 
@@ -445,7 +442,7 @@ class DiceGameServiceImplemTest {
         RankingDto rankingDto= playerServiceImp.calculationOfSuccessAveragesOfAllPlayersforRankingDto(playersListDto);
 
         // Assert the expected values
-        Assert.assertEquals("75.0", rankingDto.getOverageRankingAllPlayer().toString());
+        Assert.assertEquals("75.0", rankingDto.getOverageRankingAllPlayers().toString());
         verify(playerRepository).findAll();
 
     }

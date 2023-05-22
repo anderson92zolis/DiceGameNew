@@ -26,7 +26,7 @@ import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/v1/players")
-@Tag(name = "Dice Game Management System", description = "CRUD operations from  DICEGAMEJWT MONGODB")
+@Tag(name = "DICE GAME MANAGEMENT SYSTEM", description = "CRUD OPERATIONS FROM  DICEGAMEJWT MONGODB")
 public class DiceGameController {
 
     private final PlayerServiceImp playerServiceImp;
@@ -134,7 +134,7 @@ public class DiceGameController {
      * @return a response entity with a message indicating the success or failure of the operation
      */
 
-    @Operation(summary = "DELETE ROLLS", description = "DELETES ALL THE ROLLS OF A PLAYER WITH THE GIVEN ID")
+    @Operation(summary = "DELETE ROLLS OF A PLAYER", description = "DELETES ALL THE ROLLS OF A PLAYER WITH THE GIVEN ID")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -176,17 +176,17 @@ public class DiceGameController {
      * @param id the ID of the player to delete
      * @return a response entity indicating the result of the operation
      */
-    @Operation(summary = "Delete a player by ID")
+    @Operation(summary = "DELETE A PLAYER BY ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Player deleted successfully",
+            @ApiResponse(responseCode = "200", description = "PLAYER DELETED SUCCESSFULLY",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Message.class))),
-            @ApiResponse(responseCode = "404", description = "Player not found",
+            @ApiResponse(responseCode = "404", description = "PLAYER NOT FOUND",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Message.class))),
             @ApiResponse(
                     responseCode = "500",
-                    description = "Internal Server Error while deleting a player",
+                    description = "INTERNAL SERVER ERROR WHILE DELETING A PLAYER",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = Message.class))})
     })
@@ -212,8 +212,8 @@ public class DiceGameController {
      * If an error occurs, returns a ResponseEntity object with status code 500 (INTERNAL_SERVER_ERROR).
      * */
 
-    @Operation(summary = "Get all players",
-            description = "Retrieve all players in the game")
+    @Operation(summary = "GET ALL PLAYERS",
+            description = "RETRIEVE ALL PLAYERS IN THE GAME")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "SUCCESSFULLY RETRIEVED PLAYERS",
                     content = {@Content(mediaType = "application/json",
@@ -269,19 +269,30 @@ public class DiceGameController {
     }
 
 
-
     /**
-     *
-     *  // GET /players/ranking: returns the average ranking of all the players in the system. That is, the average percentage of successes.
+     * Endpoint:  GET   /ranking
+     * Returns the average ranking of all the players in the system.
      * The code is for a REST API endpoint that returns the overage ranking of all players in a DICE GAME.
      * It uses the @GetMapping annotation to specify the endpoint path.
-     * The method calls the getAllUsersInTheGame() and getOverageRankingOfAllPlayer() methods from the diceGameServiceImplem instance to get the necessary data.
+     * The method calls the getAllPlayersInTheGameWithOverage() and getOveragesRankingOfAllPlayer() methods from the PlayerServiceImp instance to get the necessary data.
      * If there are no players in the game, it returns a NO_CONTENT status code along with an appropriate message.
      * If an exception occurs, it returns an INTERNAL_SERVER_ERROR status code.
      */
+
+    @Operation(summary = "GET PLAYERS OVERAGE RANKING",
+            description = "RETRIEVE THE OVERAGE RANKING OF ALL PLAYERS IN THE GAME")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "SUCCESSFULLY RETRIEVED OVERAGE RANKING",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = RankingDto.class))}),
+            @ApiResponse(responseCode = "204", description = "NO PLAYERS IN THE GAME",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Message.class))}),
+            @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR",
+                    content = {@Content(mediaType = "text/plain")})
+    })
     @GetMapping("/ranking")
     public ResponseEntity<?> getOverageRankingOfAllPlayer() {
-
         try {
             List<PlayerDto> diceGameDtos = playerServiceImp.getAllPlayersInTheGameWithOverage();
             RankingDto rankingDto = playerServiceImp.getOveragesRankingOfAllPlayer();
@@ -289,22 +300,32 @@ public class DiceGameController {
                 return new ResponseEntity<>(new Message("THE IS NOT PLAYERS IN DE GAME"), HttpStatus.NO_CONTENT);
             }
             return new ResponseEntity<>(rankingDto, HttpStatus.OK);
-        } catch (Exception e) {
+        } catch (NoPlayersFoundRepositoryException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-
     }
 
-    // GET /players/ranking/loser: returns the player with the highest loser rate.
 
     /**
+     * Endpoint:  GET    /ranking/loser
      * Retrieves the player with the worst loss rate and returns their information as a ResponseEntity.
      * If no player is found, returns a "no content" response with an error message.
      * If an error occurs during the retrieval process, returns an "internal server error" response.
      *
      * @return a ResponseEntity containing the PlayerDto of the player with the worst loss rate, or an error message.
      */
+    @Operation(summary = "GET PLAYER WITH WORST LOSER RATE",
+            description = "RETRIEVE THE PLAYER WITH THE WORST LOSS RATE")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "SUCCESSFULLY RETRIEVED THE PLAYER WITH THE WORST LOSS RATE",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PlayerDto.class))}),
+            @ApiResponse(responseCode = "204", description = "NO PLAYER FOUND WITH THE WORST LOSS RATE",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Message.class))}),
+            @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR",
+                    content = {@Content(mediaType = "text/plain")})
+    })
     @GetMapping("/ranking/loser")
     public ResponseEntity<?> getWorstLoserRate() {
 
@@ -317,19 +338,30 @@ public class DiceGameController {
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
 
-    // GET /players/ranking/winner: returns the player with the highest success rat
+
 
     /**
+     * Endpoint:  GET    /ranking/winner
      * This endpoint returns the player with the worst success rate in the dice game. It retrieves the information from the diceGameServiceImplem
      * and returns a ResponseEntity with the corresponding HTTP status code and the response body.
      *
      * @return ResponseEntity with a PlayerDto object containing the information of the player with the worst success rate and HttpStatus.OK if it exists,
      * or a Message object with a corresponding message and HttpStatus.NO_CONTENT if it does not exist.
      */
-
+    @Operation(summary = "GET PLAYER WITH WORST SUCCESS RATE",
+            description = "RETRIEVE THE PLAYER WITH THE WORST SUCCESS RATE")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "SUCCESSFULLY RETRIEVED THE PLAYER WITH THE WORST SUCCESS RATE",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PlayerDto.class))}),
+            @ApiResponse(responseCode = "204", description = "NO PLAYER FOUND WITH THE WORST SUCCESS RATE",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Message.class))}),
+            @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR",
+                    content = {@Content(mediaType = "text/plain")})
+    })
     @GetMapping("/ranking/winner")
     public ResponseEntity<?> getWorstSuccessRate() throws NoPlayersFoundRepositoryException {
 

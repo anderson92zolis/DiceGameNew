@@ -16,12 +16,13 @@ import java.util.List;
 @AllArgsConstructor
 public class PlayerDto {
 
+    @JsonIgnore
     private ObjectId id;
 
     private String name;
 
     private String email;
-
+    @JsonIgnore
     private String password;
 
     private LocalDateTime localDateTime;
@@ -39,13 +40,5 @@ public class PlayerDto {
 
     public PlayerDto(String name){
         this.name=name;
-        //this.localDateTime = LocalDateTime.now();
     }
-
-    /*
-    public void addRolls(RollDto rollDto){
-        rollsList.add(rollDto);
-    }
-     */
-
 }

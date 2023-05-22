@@ -79,6 +79,7 @@ class AuthenticationServiceTest {
     @DisplayName("TEST CONVERT ENTITY TO DTO")
     public void testRegister() {
         // given
+
         // Mock the behavior of the dependencies
         when(jwtService.generateToken(any())).thenReturn("jwtToken");
         // Mock the playerRepository.save() method
@@ -86,8 +87,10 @@ class AuthenticationServiceTest {
         when(passwordEncoder.encode(any())).thenReturn(regRequest.getPassword());
 
         //when
+
         // Call the register() method
         AuthenticationResponse response = authenticationService.register(regRequest);
+
         // then
 
         assertNotNull(response);
