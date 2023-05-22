@@ -90,19 +90,18 @@ public class DiceGameController {
 
 
     /**
-     * Endpoint: PUT /{id}/games
+     * Endpoint: POST /{id}/games/
      * Endpoint for creating a new roll game for a player with the given ID.
      *
      * @param id The ID of the player to create the roll for.
      * @return A ResponseEntity containing the PlayerDto for the updated player with the new roll.
      * @throws ResourceNotFoundException If the player with the given ID does not exist.
      */
-
-    @Operation(summary = "Create rolls for a player")
+    @Operation(summary = "CREATE ROLLS FOR A PLAYER", description = "CREATING A NEW ROLL GAME FOR A PLAYER WITH THE GIVEN ID.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "201",
-                    description = "Rolls created successfully",
+                    description = "ROLLS CREATED SUCCESSFULLY",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = PlayerDto.class)
@@ -110,12 +109,18 @@ public class DiceGameController {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Player not found",
+                    description = "PLAYER NOT FOUND",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = Message.class)
                     )
-            )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Internal Server Error while creating a roll",
+                    content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Message.class))})
+
     })
     @PostMapping("/{id}/games/")
     public ResponseEntity<PlayerDto> createRolls(@PathVariable(name = "id") ObjectId id) {
@@ -125,43 +130,77 @@ public class DiceGameController {
             return ResponseEntity.status(201).body(diceGameDtoResponse);
             //return ResponseEntity.ok().body(diceGameDtoResponse);
         } catch (ResourceNotFoundException e) {
-            return new ResponseEntity(new Message("THERE IS NOT THE PLAYER " + id), HttpStatus.NOT_FOUND);
+            return new ResponseEntity(new Message("THERE IS NOT THE PLAYER WITH ID: " + id), HttpStatus.NOT_FOUND);
         }
     }
 
-
-
     /**
-     * // DELETE /players/{id}/games: deletes the player's rolls.
+     * Endpoint: DELETE  /{id}/games
      * Deletes all the rolls of a player with the given ID.
      *
      * @param id the ID of the player whose rolls are to be deleted
      * @return a response entity with a message indicating the success or failure of the operation
      */
+
+    @Operation(summary = "DELETE ROLLS", description = "DELETES ALL THE ROLLS OF A PLAYER WITH THE GIVEN ID")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "ROLLS DELETED SUCCESSFULLY",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = Message.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "PLAYER NOT FOUND",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = Message.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Internal Server Error while deleting a roll",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Message.class))})
+    })
     @DeleteMapping("/{id}/games")
     public ResponseEntity<Message> deleteRollsofAPlayer(@PathVariable(name = "id") ObjectId id) {
-
         try {
             playerServiceImp.deleteRollsofAPlayer(id);
             return ResponseEntity.ok().body(new Message("ALL ROLLS WERE DELETED FOR PLAYER WITH ID: " + id));
         } catch (ResourceNotFoundException ex) {
             return new ResponseEntity(new Message(ex.getMessage()), HttpStatus.NOT_FOUND);
         }
-
-
     }
 
-    // DELETE /players/delete/{id}: deletes the player.
+
 
     /**
+     * Endpoint: DELETE /delete/{id}:
      * Deletes a player with the specified ID.
      *
      * @param id the ID of the player to delete
      * @return a response entity indicating the result of the operation
      */
-
+    @Operation(summary = "Delete a player by ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Player deleted successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Message.class))),
+            @ApiResponse(responseCode = "404", description = "Player not found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Message.class))),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Internal Server Error while deleting a player",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Message.class))})
+    })
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<PlayerDto> deletePost(@PathVariable(name = "id") ObjectId id) throws ResourceNotFoundException {
+    public ResponseEntity<PlayerDto> deletePlayer(@PathVariable(name = "id") ObjectId id) throws ResourceNotFoundException {
 
         if (playerServiceImp.exitsById(id)) {
             PlayerDto deletedDiceGameDto = playerServiceImp.getPlayerDtoByIdWithOverage(id);
@@ -172,10 +211,10 @@ public class DiceGameController {
         }
     }
 
-    // GET /players/: returns the list of all players in the system with their average success rate.
 
     /**
-     * Retrieves all players currently in the game.
+     * Endpoint: GET /
+     * Retrieves all players in the system with their average success rate.
      *
      * @return a ResponseEntity object containing a list of PlayerDto objects with status code 200 (OK) if the request is successful.
      * If there are no players in the game, returns a ResponseEntity object with a custom header "Custom-Header" and a message "THERE IS NOT PLAYER IN THE DICEGAME" with status code 200 (OK).
