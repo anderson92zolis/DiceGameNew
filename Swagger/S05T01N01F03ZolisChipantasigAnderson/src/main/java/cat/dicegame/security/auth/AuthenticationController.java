@@ -1,9 +1,7 @@
 package cat.dicegame.security.auth;
 
 
-import cat.dicegame.security.model.Entity.Player;
 import cat.dicegame.security.model.Message.Message;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -27,10 +25,20 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
 
+    /**
+     * Endpoint: POST /register
+     * This is a POST API endpoint for register and create a player in a DiceGame.
+     * It checks if a player with the same name already exists using the verifyPlayerName(name) method.
+     * * It checks if a player with the same email already exists using the verifyFindByEmail(email)  method.
+     * If a player with the same name exists, it sets an appropriate message and values for the response.
+     * If not, it registers/creates a new player and sets the appropriate values for the response.
+     * The method returns a ResponseEntity object containing the token generated and the appropriate HTTP status code.
+     */
+
     @Operation(summary = "Register a player", description = "register and add a player to the database")
     @ApiResponses(value = {
 
-            @ApiResponse(responseCode = "200", description = "SUCCESSFULLY REGISTERED",content = {@Content(mediaType = "application/json",
+            @ApiResponse(responseCode = "201", description = "SUCCESSFULLY REGISTERED",content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = RegisterRequest.class))}),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST",content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = Message.class))}),
@@ -50,13 +58,23 @@ public class AuthenticationController {
             return new ResponseEntity(
                     new Message("PLAYER ALREADY EXISTS WITH THIS EMAIL: " + request.getEmail()), HttpStatus.CONFLICT);
         } else {
-
-            return ResponseEntity.ok(authenticationService.register(request));
+            return ResponseEntity.status(201).body(authenticationService.register(request));
+            //return ResponseEntity.ok(authenticationService.register(request));
         }
     }
 
-    @Operation(summary = "Authentication-Login", description = "Login a player in the application")
+
+    /**
+     * Endpoint: POST /authenticate
+     * This is a POST API endpoint for authenticating a user in the DiceGame.
+     *
+     * @param request The request body containing the authentication credentials.
+     * @return ResponseEntity with the authentication response (Token) and the appropriate HTTP status code.
+     */
+
+    @Operation(summary = "Authentication-Login", description = "Authenticate a user with the provided credentials")
     @ApiResponses(value = {
+
             @ApiResponse(responseCode = "200", description = "TOKEN GENERATED",content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = AuthenticationResponse.class))}),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST",content = {@Content(mediaType = "application/json",
@@ -72,6 +90,4 @@ public class AuthenticationController {
     ) {
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
-
-
 }

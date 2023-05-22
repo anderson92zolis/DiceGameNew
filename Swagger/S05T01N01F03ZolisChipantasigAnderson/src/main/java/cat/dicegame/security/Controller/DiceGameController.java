@@ -4,12 +4,15 @@ package cat.dicegame.security.Controller;
 
 import cat.dicegame.security.model.Dto.PlayerDto;
 import cat.dicegame.security.model.Dto.RankingDto;
+import cat.dicegame.security.model.Dto.RollDto;
 import cat.dicegame.security.model.Exceptions.NameRepetitiveException;
 import cat.dicegame.security.model.Exceptions.NoPlayersFoundRepositoryException;
 import cat.dicegame.security.model.Exceptions.ResourceNotFoundException;
 import cat.dicegame.security.model.Message.Message;
 import cat.dicegame.security.model.Service.PlayerServiceImp;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,12 +22,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/v1/players")
-@Tag(name = "Dice Management System", description = "CRUD operations from  DICEGAMEJWT MONGODB")
+@Tag(name = "Dice Game Management System", description = "CRUD operations from  DICEGAMEJWT MONGODB")
 public class DiceGameController {
 
     private final PlayerServiceImp playerServiceImp;
@@ -36,98 +46,93 @@ public class DiceGameController {
         this.playerServiceImp = playerServiceImp;
     }
 
-
-    //POST: /players: create a player.
-
     /**
-     * This is a POST API endpoint for creating a new player in a DiceGame.
-     * It checks if a player with the same name already exists using the verifyPlayerName() method.
-     * If a player with the same name exists, it sets an appropriate message and values for the response.
-     * If not, it creates a new player and sets the appropriate values for the response.
-     * The method returns a ResponseEntity object containing the PlayerDto object and the appropriate HTTP status code.
-    */
-
-
-    @PostMapping("/new")
-    public ResponseEntity<PlayerDto> createPlayer(@RequestBody PlayerDto playerDtoRequest) {
-
-        PlayerDto diceGameDtoResponse = null;
-        HttpStatus httpStatus;
-        if (playerServiceImp.verifyPlayerName(playerDtoRequest.getName())) {
-            return new ResponseEntity(new Message("PLAYER ALREADY EXISTS WITH NAME: " + playerDtoRequest.getName()), HttpStatus.OK);
-        } else {
-            diceGameDtoResponse = playerServiceImp.createPlayer(playerDtoRequest);
-            httpStatus = HttpStatus.CREATED;
-        }
-
-        return new ResponseEntity<>(diceGameDtoResponse, httpStatus);
-    }
-
-
-    // PUT players: modifies the player's name.
-
-    /**
-     * Endpoint: PUT /players/{id}
+     * Endpoint: PUT /{id}
      * <p>
      * Description:
-     * This API endpoint updates an existing player with the provided player ID. It accepts a request body of type PlayerDto, which contains the updated details of the player. The method first attempts to update the player using the diceGameServiceImplem object's updatePlayer() method. If the update is successful, the method returns a ResponseEntity object with the updated PlayerDto and an HTTP status code of 200 (OK). If the update fails due to a NameRepetitiveException or ResourceNotFoundException, the method catches the exception and returns a ResponseEntity object with a Message object containing the exception message and an HTTP status code of 404 (Not Found).
+     * This API endpoint updates an existing player with the provided player ID. It accepts a request body of type PlayerDto, which contains the updated details of the player. The method first attempts to update the player using the diceGameServiceImplem object's updatePlayer() method. If the update is successful, the method returns a ResponseEntity object with the updated PlayerDto and an HTTP status code of 201 (OK). If the update fails due to a NameRepetitiveException or ResourceNotFoundException, the method catches the exception and returns a ResponseEntity object with a Message object containing the exception message and an HTTP status code of 404 (Not Found).
      * <p>
      * Parameters:
      * <p>
-     * id (integer): the ID of the player to update, provided as a path variable
+     * id (ObjectId): the ID of the player to update, provided as a path variable
      * playerDtoRequest (PlayerDto): the updated details of the player, provided as a request body
      * <p>
      * Returns:
      * <p>
-     * ResponseEntity<PlayerDto>: the updated PlayerDto object, along with an HTTP status code. If the update was successful, the status code will be 200 (OK). If the update failed due to a NameRepetitiveException or ResourceNotFoundException, the status code will be 404 (Not Found).
+     * ResponseEntity<PlayerDto>: the updated PlayerDto object, along with an HTTP status code. If the update was successful, the status code will be 201 (OK). If the update failed due to a NameRepetitiveException or ResourceNotFoundException, the status code will be 404 (Not Found).
      */
     @Operation(summary = "UPDATE",
-            description = "update a Name of a player from the database")
+            description = "UPDATE A NAME OF A PLAYER FROM THE DATABASE")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "SUCCESSFULLY UPDATED Player"),
-            @ApiResponse(responseCode = "404", description = "PLAYER NOT FOUND, NOT FOUND WITH ID : 'X'")
-    })
+            @ApiResponse(responseCode = "200", description = "THE NAME ALREADY EXISTS IN THE DATABASE",content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Message.class))}),
+            @ApiResponse(responseCode = "201", description = "SUCCESSFULLY UPDATED PLAYER",content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = PlayerDto.class))}),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST", content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Message.class))}),
+            @ApiResponse(responseCode = "404", description = "PLAYER WITH ID X NOT FOUND",content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Message.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error while updating the player", content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Message.class))})})
     @PutMapping("/{id}")
     public ResponseEntity<PlayerDto> updatePlayer(@PathVariable ObjectId id, @RequestBody PlayerDto playerDtoRequest) {
 
         try {
             PlayerDto playerDtoResponse = playerServiceImp.updatePlayer(id, playerDtoRequest);
-            return ResponseEntity.ok().body(playerDtoResponse);
+            return ResponseEntity.status(201).body(playerDtoResponse);
+            //return ResponseEntity.ok().body(playerDtoResponse);
         } catch (NameRepetitiveException ex) {
-            return new ResponseEntity(new Message(ex.getMessage()), HttpStatus.NOT_FOUND);
+            return new ResponseEntity(new Message(ex.getMessage()), HttpStatus.OK);
         } catch (ResourceNotFoundException e) {
             return new ResponseEntity(new Message(e.getMessage()), HttpStatus.NOT_FOUND);
         }
-
-
     }
 
 
-    // POST /players/{id}/games/ : a specific player makes a roll of the dice.
-
     /**
-     * Endpoint for creating a new roll for a player with the given ID.
+     * Endpoint: PUT /{id}/games
+     * Endpoint for creating a new roll game for a player with the given ID.
      *
      * @param id The ID of the player to create the roll for.
      * @return A ResponseEntity containing the PlayerDto for the updated player with the new roll.
      * @throws ResourceNotFoundException If the player with the given ID does not exist.
      */
 
+    @Operation(summary = "Create rolls for a player")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Rolls created successfully",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = PlayerDto.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Player not found",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = Message.class)
+                    )
+            )
+    })
     @PostMapping("/{id}/games/")
     public ResponseEntity<PlayerDto> createRolls(@PathVariable(name = "id") ObjectId id) {
 
         try {
             PlayerDto diceGameDtoResponse = playerServiceImp.createRoll(id);
-            return ResponseEntity.ok().body(diceGameDtoResponse);
+            return ResponseEntity.status(201).body(diceGameDtoResponse);
+            //return ResponseEntity.ok().body(diceGameDtoResponse);
         } catch (ResourceNotFoundException e) {
             return new ResponseEntity(new Message("THERE IS NOT THE PLAYER " + id), HttpStatus.NOT_FOUND);
         }
-
     }
 
-    // DELETE /players/{id}/games: deletes the player's rolls.
+
 
     /**
+     * // DELETE /players/{id}/games: deletes the player's rolls.
      * Deletes all the rolls of a player with the given ID.
      *
      * @param id the ID of the player whose rolls are to be deleted
