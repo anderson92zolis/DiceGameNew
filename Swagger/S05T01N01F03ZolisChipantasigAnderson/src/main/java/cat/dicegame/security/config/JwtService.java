@@ -66,11 +66,11 @@ public class JwtService {
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {   // validate is the token belong to a player
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+        final String usernameFromToken = extractUsername(token);
+        return (usernameFromToken.equals(userDetails.getUsername()) && !isTokenExpired(token)) ;
     }
 
-    private boolean isTokenExpired(String token) {   //verify it the token is expire
+    private boolean isTokenExpired(String token) {   // verify it the token is expired
         return extractExpiration(token).before(new Date());
     }
 

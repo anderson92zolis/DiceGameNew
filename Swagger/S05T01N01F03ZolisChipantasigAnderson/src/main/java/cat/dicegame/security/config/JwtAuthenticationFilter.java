@@ -30,7 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
-        final String authHeader = request.getHeader(("Authorization")); // is the header that contains the JWT token or the  bearer token we call it also computer token okay
+        final String authHeader = request.getHeader(("Authorization")); // is the header that contains the JWT token or the  bearer token we call it also computer token
         final String jwt;
         final String userEmail;
 

@@ -3,6 +3,7 @@ package cat.dicegame.security.Controller;
 
 import cat.dicegame.security.model.Dto.PlayerDto;
 import cat.dicegame.security.model.Dto.RankingDto;
+import cat.dicegame.security.model.Dto.RollDto;
 import cat.dicegame.security.model.Exceptions.NameRepetitiveException;
 import cat.dicegame.security.model.Exceptions.NoPlayersFoundRepositoryException;
 import cat.dicegame.security.model.Exceptions.ResourceNotFoundException;
@@ -22,7 +23,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/v1/players")
@@ -30,7 +30,6 @@ import java.util.NoSuchElementException;
 public class DiceGameController {
 
     private final PlayerServiceImp playerServiceImp;
-
 
     @Autowired
     public DiceGameController(PlayerServiceImp playerServiceImp) {
@@ -249,9 +248,9 @@ public class DiceGameController {
     @Operation(summary = "ROLL OF A PLAYER BY ID",
             description = "RETURNS THE LIST OF PLAYS BY A PLAYER.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "SUCCESSFULLY RETRIEVED PLAYER",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = PlayerDto.class))}),
+            @ApiResponse(responseCode = "200", description = "SUCCESSFULLY RETRIEVED THE GAMES OF A PLAYER",
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = RollDto.class)))),
             @ApiResponse(responseCode = "404", description = "PLAYER NOT FOUND",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = Message.class))}),
@@ -259,10 +258,10 @@ public class DiceGameController {
                     content = @Content)
     })
     @GetMapping("/{id}/games")
-    public ResponseEntity<PlayerDto> getPlayerById(@PathVariable(name = "id") ObjectId id) throws ResourceNotFoundException {
+    public ResponseEntity<List<RollDto>> getPlayerById(@PathVariable(name = "id") ObjectId id) throws ResourceNotFoundException {
         if (playerServiceImp.exitsById(id)) {
             PlayerDto playerDto = playerServiceImp.getPlayerDtoByIdWithOverage(id);
-            return new ResponseEntity<>(playerDto, HttpStatus.OK);
+            return new ResponseEntity<>(playerDto.getRollsList(), HttpStatus.OK);
         } else {
             return new ResponseEntity(new Message("NOT FOUND ID : " + id), HttpStatus.NOT_FOUND);
         }

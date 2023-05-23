@@ -26,11 +26,14 @@ public class SecurityConfiguration {
                 .csrf()
                 .disable()
                 .authorizeHttpRequests() // if  some endpoint need Authorize
-                .requestMatchers("/api/v1/auth/**","/swagger-ui/index.html/**")
+
+                .requestMatchers("/api/v1/auth/**", "/swagger-ui/index.html**", "/v3/api-docs/**", "/swagger-ui/**")
                 .permitAll()
-                .anyRequest().permitAll()
-                // .anyRequest()
-                // .authenticated()    //remove this to see the Swagger interface
+                .requestMatchers("/swagger-ui.html/**")
+                .permitAll()
+                .anyRequest()
+                .authenticated()
+
                 .and() //new configuration
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS) //
