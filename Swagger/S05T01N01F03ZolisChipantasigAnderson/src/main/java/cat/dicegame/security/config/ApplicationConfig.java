@@ -23,7 +23,7 @@ public class ApplicationConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> playerRepository.findByEmail(username)
+        return email -> playerRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("USER NOT FOUND FROM AUTH"));
     }
 

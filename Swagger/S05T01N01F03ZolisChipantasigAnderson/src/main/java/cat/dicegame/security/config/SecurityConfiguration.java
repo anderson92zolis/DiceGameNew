@@ -16,6 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfiguration {
 
     // To confing swagger:  : https://www.bezkoder.com/spring-boot-jwt-auth-mongodb/#With_WebSecurityConfigurerAdapter
+    // to check later: https://www.toptal.com/spring/spring-security-tutorial
 
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
@@ -43,6 +44,8 @@ public class SecurityConfiguration {
 
     return httpSecurity.build();
     }
+
+
 
 
 }

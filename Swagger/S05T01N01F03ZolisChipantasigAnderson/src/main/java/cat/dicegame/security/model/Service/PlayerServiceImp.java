@@ -95,9 +95,8 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, GamesInterfac
         }
 
         Player player = getPlayerById(id);
+
         player.setName(playerDtoRequest.getName());
-        //player.setEmail(playerDtoRequest.getEmail());
-        // player.setPassword(playerDtoRequest.getPassword());
         PlayerDto playerDtoResponse = convertPlayerEntitytoDTO(playerRepository.save(player));
         return getPlayerDtoByIdWithOverage(playerDtoResponse.getId());
 
@@ -147,8 +146,7 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, GamesInterfac
             throw new ResourceNotFoundException("PLAYER WITH ID " + id + " NOT FOUND");
         }
 
-        PlayerDto diceGameDto = getPlayerDtoByIdWithOverage(id);
-        Player player = convertPlayerDTOtoEntity(diceGameDto);
+        Player player = getPlayerById(id);
         player.deleteRolls();
         playerRepository.save(player);
     }
