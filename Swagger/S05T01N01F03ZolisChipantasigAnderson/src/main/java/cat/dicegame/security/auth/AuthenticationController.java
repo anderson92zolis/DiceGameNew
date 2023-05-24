@@ -39,8 +39,6 @@ public class AuthenticationController {
 
             @ApiResponse(responseCode = "201", description = "SUCCESSFULLY REGISTERED",content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = RegisterRequest.class))}),
-            @ApiResponse(responseCode = "400", description = "BAD REQUEST",content = {@Content(mediaType = "application/json",
-                    schema = @Schema(implementation = Message.class))}),
             @ApiResponse(responseCode = "409", description = "NAME OR A EMAIL OF A PLAYER ALREADY EXISTS",content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = Message.class))}),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR",content = {@Content(mediaType = "application/json",
@@ -76,9 +74,7 @@ public class AuthenticationController {
 
             @ApiResponse(responseCode = "200", description = "TOKEN GENERATED",content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = AuthenticationResponse.class))}),
-            @ApiResponse(responseCode = "400", description = "BAD REQUEST",content = {@Content(mediaType = "application/json",
-                    schema = @Schema(implementation = Message.class))}),
-            @ApiResponse(responseCode = "403", description = "ACCESS DENIED",content = {@Content(mediaType = "application/json",
+            @ApiResponse(responseCode = "403", description = "FORBIDDEN/ACCESS DENIED",content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = Message.class))}),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR",content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = Message.class))})

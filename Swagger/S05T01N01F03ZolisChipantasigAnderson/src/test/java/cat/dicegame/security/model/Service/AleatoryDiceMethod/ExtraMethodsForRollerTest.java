@@ -2,12 +2,14 @@ package cat.dicegame.security.model.Service.AleatoryDiceMethod;
 
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 
 public class ExtraMethodsForRollerTest {
 
     @Test
+    @DisplayName("Test Random Numbers")
     public void randomNumbersTest() {
 
         int randomNumber = ExtraMethodsForRoller.randomNumbers();
@@ -15,6 +17,7 @@ public class ExtraMethodsForRollerTest {
     }
 
     @Test
+    @DisplayName("Test Return Winner or Lost")
     public void returnWinnerLostTest() {
         String result1 = ExtraMethodsForRoller.returnWinnerLost(3, 4);
         Assertions.assertEquals("WIN", result1, "Sum of dice is 7, should return 'WIN'");

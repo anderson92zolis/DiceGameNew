@@ -19,66 +19,54 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class PlayerRepositoryTest {
 
-
-    //@MockBean
     @Autowired
     private PlayerRepository playerRepositoryUnderTest;
 
-    private Player player;
+    private Player testPlayer1;
+    private Player testPlayer2;
 
     @BeforeEach
     void setUp() {
 
+        testPlayer1 = new Player("TESTPLAYER1");
+        testPlayer1.setEmail("test1@gmail.com");
+        testPlayer1.setPassword("1");
 
-        player = new Player("PLAYER");
-        player.setEmail("email@gmail.com");
-        player.setPassword("1");
+        testPlayer2 = new  Player("TESTPLAYER2");
+        testPlayer2.setEmail("test2@gmail.com");
+        testPlayer2.setPassword("2");
 
     }
-
-
 
     @DisplayName("TEST TO SAVE THE PLAYER")
     @Test
     //@Disabled
     public void savePlayerTest() {
 
-
         //give
-
-        Player player1 = new  Player("TEST");
-
-        player1.setEmail("testEmail@gmail.com");
-        player1.setPassword("1");
+            // crete @BeforeEach
 
         //when
-
-        Player foundPlayer = playerRepositoryUnderTest.save(player1);
-
+        Player foundPlayer1 = playerRepositoryUnderTest.save(testPlayer1);
 
         //then
-      assertThat(foundPlayer).isNotNull();
-      assertThat(foundPlayer.getEmail()).isEqualTo("testEmail@gmail.com");
+      assertThat(foundPlayer1).isNotNull();
+      assertThat(foundPlayer1.getEmail()).isEqualTo("test1@gmail.com");
     }
 
-    @DisplayName("TEST TO GET ALL PLAYERS, Verify the numbers of player in database")
+    @DisplayName("TEST TO GET ALL PLAYERS: Verify the numbers of player in database")
     @Test
     //@Disabled
     public void getAllPlayerTest() {
 
 
         //give
+        playerRepositoryUnderTest.save(testPlayer1);
+        playerRepositoryUnderTest.save(testPlayer2);
 
-        Player player2 = new  Player("player2");
-
-        player2.setEmail("email@gmail.com");
-        player2.setPassword("2");
-
-        playerRepositoryUnderTest.save(player);
-        playerRepositoryUnderTest.save(player2);
         //when
 
-        List<Player> listPlayers = playerRepositoryUnderTest.findAll();
+        List<Player> listPlayers = playerRepositoryUnderTest.findAll(); // verify that the MongoDB is empty
 
         //then
         assertThat(listPlayers).isNotNull();
@@ -91,13 +79,13 @@ class PlayerRepositoryTest {
     public void getAPlayerByIdTest() {
 
         //give
-        Player playerSaved=  playerRepositoryUnderTest.save(player);
+        Player playerToSaved1=  playerRepositoryUnderTest.save(testPlayer1);
 
         //when
-        Player playerFound = playerRepositoryUnderTest.findById(playerSaved.getId()).get();
+        Player playerFound1 = playerRepositoryUnderTest.findById(playerToSaved1.getId()).get();
 
         //then
-        assertThat(playerFound).isNotNull();
+        assertThat(playerFound1).isNotNull();
     }
 
     @DisplayName("TEST TO UPDATE A PLAYER BY ID")
@@ -106,18 +94,17 @@ class PlayerRepositoryTest {
     public void updatePlayerByIdTest() {
 
         //give
-        Player playerSaved=  playerRepositoryUnderTest.save(player);
+        Player playerToSaved1=  playerRepositoryUnderTest.save(testPlayer1);
 
         //when
-        Player playerFound = playerRepositoryUnderTest.findById(playerSaved.getId()).get();
-        playerFound.setName("updatedName");
-        playerFound.setEmail("updatedEmail@");
-
-        Player updatedPlayer= playerRepositoryUnderTest.save(playerFound);
+        Player playerFound1 = playerRepositoryUnderTest.findById(playerToSaved1.getId()).get();
+        playerFound1.setName("updatedName1");
+        playerFound1.setEmail("updated1@gmail.com");
+        Player updatedPlayer= playerRepositoryUnderTest.save(playerFound1);
 
         //then
-        assertThat(updatedPlayer.getName()).isEqualTo("updatedName");
-        assertThat(updatedPlayer.getEmail()).isEqualTo("updatedEmail@");
+        assertThat(updatedPlayer.getName()).isEqualTo("updatedName1");
+        assertThat(updatedPlayer.getEmail()).isEqualTo("updated1@gmail.com");
     }
 
     @DisplayName("TEST TO DELETE A PLAYER BY ID")
@@ -126,13 +113,14 @@ class PlayerRepositoryTest {
     public void deletePlayerByIdTest() {
 
         //give
-        Player playerSaved=  playerRepositoryUnderTest.save(player);
+        Player playerToSave1=  playerRepositoryUnderTest.save(testPlayer1);
 
         //when
-        playerRepositoryUnderTest.deleteById(playerSaved.getId());
-        Optional<Player> empleadoOptional = playerRepositoryUnderTest.findById(playerSaved.getId());
+        playerRepositoryUnderTest.deleteById(playerToSave1.getId());
+        Optional<Player> empleadoOptional = playerRepositoryUnderTest.findById(playerToSave1.getId());
 
         //then
+
         assertThat(empleadoOptional).isEmpty();
     }
 

@@ -59,7 +59,7 @@ public class DiceGameController {
                     schema = @Schema(implementation = Message.class))}),
             @ApiResponse(responseCode = "201", description = "SUCCESSFULLY UPDATED PLAYER", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = PlayerDto.class))}),
-            @ApiResponse(responseCode = "400", description = "BAD REQUEST", content = {@Content(mediaType = "application/json",
+            @ApiResponse(responseCode = "403", description = "ACCESS DENIED",content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = Message.class))}),
             @ApiResponse(responseCode = "404", description = "PLAYER WITH ID X NOT FOUND", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = Message.class))}),
@@ -98,6 +98,8 @@ public class DiceGameController {
                             schema = @Schema(implementation = PlayerDto.class)
                     )
             ),
+            @ApiResponse(responseCode = "403", description = "ACCESS DENIED",content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Message.class))}),
             @ApiResponse(
                     responseCode = "404",
                     description = "PLAYER NOT FOUND",
@@ -143,6 +145,8 @@ public class DiceGameController {
                             schema = @Schema(implementation = Message.class)
                     )
             ),
+            @ApiResponse(responseCode = "403", description = "ACCESS DENIED",content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Message.class))}),
             @ApiResponse(
                     responseCode = "404",
                     description = "PLAYER NOT FOUND",
@@ -180,6 +184,8 @@ public class DiceGameController {
             @ApiResponse(responseCode = "200", description = "PLAYER DELETED SUCCESSFULLY",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Message.class))),
+            @ApiResponse(responseCode = "403", description = "ACCESS DENIED",content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Message.class))}),
             @ApiResponse(responseCode = "404", description = "PLAYER NOT FOUND",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Message.class))),
@@ -251,6 +257,8 @@ public class DiceGameController {
             @ApiResponse(responseCode = "200", description = "SUCCESSFULLY RETRIEVED THE GAMES OF A PLAYER",
                     content = @Content(mediaType = "application/json",
                             array = @ArraySchema(schema = @Schema(implementation = RollDto.class)))),
+            @ApiResponse(responseCode = "403", description = "ACCESS DENIED",content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Message.class))}),
             @ApiResponse(responseCode = "404", description = "PLAYER NOT FOUND",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = Message.class))}),
@@ -293,8 +301,10 @@ public class DiceGameController {
     @GetMapping("/ranking")
     public ResponseEntity<?> getOverageRankingOfAllPlayer() {
         try {
+
             List<PlayerDto> diceGameDtos = playerServiceImp.getAllPlayersInTheGameWithOverage();
             RankingDto rankingDto = playerServiceImp.getOveragesRankingOfAllPlayer();
+
             if (diceGameDtos.isEmpty()) {
                 return new ResponseEntity<>(new Message("THE IS NOT PLAYERS IN DE GAME"), HttpStatus.NO_CONTENT);
             }
