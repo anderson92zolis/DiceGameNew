@@ -39,29 +39,44 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class DiceGameServiceImplemTest {
 
-    List<Player> playersList;
-    List<PlayerDto> playersListDto;
+
     @Mock
     private PlayerRepository playerRepository;
     @Autowired
     @InjectMocks
     private PlayerServiceImp playerServiceImp;
-    private PlayerDto playerDtoA;
+
     private Player playerA;
-    private PlayerDto playerDtoB;
+    private PlayerDto playerDtoA;
     private Player playerB;
-    private Role role;
+    private PlayerDto playerDtoB;
+    List<Player> playersList;
+    List<PlayerDto> playersListDto;
 
     @BeforeEach
     void setUp() {
 
-        playerA = new Player("PLAYERA");
-        playerA.setEmail("aemail@gmail.com");
-        playerA.setPassword("1");
+        ObjectId objectIdA = new ObjectId();
 
-        playerB = new Player("PLAYERB");
-        playerB.setEmail("bemail@gmail.com");
-        playerB.setPassword("2");
+        playerA = Player.builder()
+                .id(objectIdA)
+                .name("PLAYERA")
+                .email("aemail@gmail.com")
+                .password("1")
+                .localDateTime(LocalDateTime.now())
+                .rollsList(new ArrayList<>())
+                .role(Role.USER).build();
+
+        ObjectId objectIdB = new ObjectId();
+
+        playerB = Player.builder()
+                .id(objectIdB)
+                .name("PLAYERB")
+                .email("bemail@gmail.com")
+                .password("2")
+                .localDateTime(LocalDateTime.now())
+                .rollsList(new ArrayList<>())
+                .role(Role.USER).build();
 
 
         playersList = new ArrayList<>();
@@ -69,39 +84,28 @@ class DiceGameServiceImplemTest {
         playersList.add(playerB);
 
         playerDtoA = new PlayerDto("PLAYERA");
-        playerDtoA.setEmail("aemail@gmail.com");
-        playerDtoA.setPassword("1");
+        //playerDtoA.setEmail("aemail@gmail.com");
+        //playerDtoA.setPassword("1");
 
         playerDtoB = new PlayerDto("PLAYERB");
-        playerDtoB.setEmail("bemail@gmail.com");
-        playerDtoB.setPassword("2");
+        //playerDtoB.setEmail("bemail@gmail.com");
+        //playerDtoB.setPassword("2");
 
         playersListDto = new ArrayList<>();
         playersListDto.add(playerDtoA);
         playersListDto.add(playerDtoB);
-
-
     }
 
     @AfterEach
     void tearDown() {
-
     }
 
     @DisplayName("TEST CONVERT ENTITY TO DTO")
     @Test
     void convertPlayerEntitytoDTOTest() {
         //given
-        ObjectId objectId = new ObjectId();
 
-         playerA = Player.builder()
-                .id(objectId)
-                .name("Anderson")
-                .email("anderso_nemail@gmail.com")
-                .password("password")
-                .localDateTime(LocalDateTime.now())
-                .rollsList(new ArrayList<>())
-                .role(role).build();
+                // @BeforeEach
 
          //when
 
@@ -112,9 +116,8 @@ class DiceGameServiceImplemTest {
         assertThat(playerConverted).isNotNull();
 
         //assert playerConverted.getClass().equals(playerDtoA.getClass());
+
         assertEquals(playerConverted.getClass(), playerDtoA.getClass());
-
-
 
     }
 
@@ -132,27 +135,11 @@ class DiceGameServiceImplemTest {
 
         assertEquals(playerConverted.getClass(), playerA.getClass());
 
-
-    }
-
-    @DisplayName("TEST TO CREATE A PLAYER")
-    @Test
-        //@Disabled
-    void createPlayerTest() {
-        //given
-        when(playerRepository.save(any())).thenReturn(playerA);
-        //when
-        PlayerDto playerDtoSaved = playerServiceImp.createPlayer(playerDtoA);
-        //then
-        verify(playerRepository, times(1)).save(any());
-        // System.out.println(playerDtoSaved);
-        assertThat(playerDtoSaved).isNotNull();
     }
 
     @Test
     @DisplayName("TEST UPDATE A PLAYER")
         //@Disabled
-
     void updatePlayerTest() throws NameRepetitiveException, ResourceNotFoundException {
 
         //given
@@ -160,12 +147,12 @@ class DiceGameServiceImplemTest {
 
         Player expectedPlayer = Player.builder()
                 .id(objectId)
-                .name("Anderson")
-                .email("anderso_nemail@gmail.com")
-                .password("password")
+                .name("name_Expect")
+                .email("name_Expect@gmail.com")
+                .password("passwordName_Expect")
                 .localDateTime(LocalDateTime.now())
                 .rollsList(new ArrayList<>())
-                .role(role).build();
+                .role(Role.USER).build();
 
         when(playerRepository.existsById(objectId)).thenReturn(true);
         when(playerRepository.findById(objectId)).thenReturn(Optional.ofNullable(expectedPlayer));
@@ -179,15 +166,54 @@ class DiceGameServiceImplemTest {
 
         //then
         assertEquals("UpdatedPlayer", playerAUpdatedDto.getName());
+
         verify(playerRepository).existsById(objectId);
+        verify(playerRepository,times (1)).save(expectedPlayer);
+    }
+
+    @Test
+        //@Disabled
+    @DisplayName("CREATE ROLL FOR PLAYER")
+    void createRollTest() throws ResourceNotFoundException {
+        //given
+        ObjectId objectId = new ObjectId();
+
+        Player expectedPlayerToAddRolls = Player.builder()
+                .id(objectId)
+                .name("Anderson")
+                .email("anderso_nemail@gmail.com")
+                .password("password")
+                .localDateTime(LocalDateTime.now())
+                .rollsList(new ArrayList<>())
+                .role(Role.USER).build();
+
+        when(playerRepository.findById(objectId)).thenReturn(Optional.ofNullable(expectedPlayerToAddRolls));
+        when(playerRepository.save(expectedPlayerToAddRolls)).thenReturn(expectedPlayerToAddRolls);
+
+
+        //when
+
+        //Adding Rolls
+        // 1 to 3
+
+        PlayerDto expectedPlayerWithRoll = playerServiceImp.createRoll(objectId);
+        expectedPlayerWithRoll = playerServiceImp.createRoll(objectId);
+        expectedPlayerWithRoll = playerServiceImp.createRoll(objectId);
+
+        //then
+        assertEquals(3, expectedPlayerWithRoll.getRollsList().size());
+        assertThat(expectedPlayerWithRoll.getRollsList().size()).isNotNull();
+
+        // verify with assertion
+        verify(playerRepository,times (3)).save(expectedPlayerToAddRolls);
+
     }
 
     @Test
     @DisplayName("TEST DELETE THE ROLLS OF A PLAYER")
-    //@Disabled
-    void deleteRollsofAPlayerTest() throws ResourceNotFoundException {
+        //@Disabled
+    void deleteRollsOfAPlayerTest() throws ResourceNotFoundException {
         //given
-        ObjectId objectId = new ObjectId();
 
         List<Roll> rollsList = new ArrayList<>();
 
@@ -196,66 +222,32 @@ class DiceGameServiceImplemTest {
         rollsList.add(new Roll(3, 4, "WIN", new Date()));
         rollsList.add(new Roll(5, 6, "LOSS", new Date()));
         rollsList.add(new Roll(2, 3, "WIN", new Date()));
+        ObjectId objectId = new ObjectId();
 
-        Player expectedPlayer = Player.builder()
+        Player playerWithToDeleteRolls = Player.builder()
                 .id(objectId)
                 .name("Anderson")
                 .email("anderso_nemail@gmail.com")
                 .password("password")
                 .localDateTime(LocalDateTime.now())
-                .rollsList(rollsList)
-                .role(role).build();
+                .rollsList(rollsList) // adding rolls
+                .role(Role.USER).build();
 
-       when(playerRepository.existsById(objectId)).thenReturn(true);
+        when(playerRepository.existsById(objectId)).thenReturn(true);
 
-       when(playerRepository.findById(objectId)).thenReturn(Optional.ofNullable(expectedPlayer));
+        when(playerRepository.findById(objectId)).thenReturn(Optional.ofNullable(playerWithToDeleteRolls));
 
-        expectedPlayer.deleteRolls();
-        when(playerRepository.save(any())).thenReturn(expectedPlayer);
-
+        when(playerRepository.save(any())).thenReturn(playerWithToDeleteRolls);
         //when
-
-        // delete Rolls
+            // delete Rolls
         playerServiceImp.deleteRollsofAPlayer(objectId);
 
         //then
-        assertEquals(0 , expectedPlayer.getRollsList().size());
-        assertThat(expectedPlayer.getRollsList().size()).isNotNull();
-        verify(playerRepository).findById(objectId);
-
-    }
-
-
-
-    @Test
-        //@Disabled
-    void createRollTest() throws ResourceNotFoundException {
-        //given
-        ObjectId objectId = new ObjectId();
-
-        Player expectedPlayer = Player.builder()
-                .id(objectId)
-                .name("Anderson")
-                .email("anderso_nemail@gmail.com")
-                .password("password")
-                .localDateTime(LocalDateTime.now())
-                .rollsList(new ArrayList<>())
-                .role(role).build();
-
-        when(playerRepository.save(expectedPlayer)).thenReturn(expectedPlayer);
-        when(playerRepository.findById(objectId)).thenReturn(Optional.ofNullable(expectedPlayer));
-
-        //when
-
-        //Adding Rolls
-        // 1 to 3
-        PlayerDto expectedPlayerWithRoll = playerServiceImp.createRoll(objectId);
-        expectedPlayerWithRoll = playerServiceImp.createRoll(objectId);
-        expectedPlayerWithRoll = playerServiceImp.createRoll(objectId);
-
-        //then
-        assertEquals(3, expectedPlayerWithRoll.getRollsList().size());
-        assertThat(expectedPlayerWithRoll.getRollsList().size()).isNotNull();
+        assertEquals(0 , playerWithToDeleteRolls.getRollsList().size());
+        assertThat(playerWithToDeleteRolls.getRollsList().size()).isNotNull();
+            // verify with assertion
+        verify(playerRepository,times (1)).findById(objectId);
+        verify(playerRepository,times (1)).save(playerWithToDeleteRolls);
 
     }
 
@@ -273,7 +265,7 @@ class DiceGameServiceImplemTest {
                 .password("password")
                 .localDateTime(LocalDateTime.now())
                 .rollsList(new ArrayList<>())
-                .role(role).build();
+                .role(Role.USER).build();
 
         willDoNothing().given(playerRepository).deleteById(objectId);
 
@@ -282,8 +274,8 @@ class DiceGameServiceImplemTest {
         playerServiceImp.deleteUser(objectId);
 
         // then
-        verify(playerRepository, times(1)).deleteById(objectId);
-
+        verify(playerRepository).deleteById(objectId);
+        verify(playerRepository, times(1)).deleteById(objectId); //  # of invocation, this because doesn't return a Player
     }
 
 
@@ -298,22 +290,35 @@ class DiceGameServiceImplemTest {
 
         //when
 
-        List<Player> playerServiceListDto = playerServiceImp.getAllPlayersFromDB();
+        List<Player> playerServiceList = playerServiceImp.getAllPlayersFromDB();
 
         //then
+
+        assertEquals(playerServiceList.get(0).getName(), "PLAYERA");
+        assertEquals(playerServiceList.size(), playersListDto.size());
+        assertThat(playerServiceList).isNotNull();
 
         verify(playerRepository, times(1)).save(playerA);
         verify(playerRepository, times(1)).save(playerB);
         verify(playerRepository, times(1)).findAll();
-        assertEquals(playerServiceListDto.get(0).getName(), "PLAYERA");
-        assertEquals(playerServiceListDto.size(), playersListDto.size());
-        assertThat(playerServiceListDto).isNotNull();
+
 
     }
     @Test
         //@Disabled
     void getAllPlayersInTheGameWithOverageTest() throws NoSuchElementException, NoPlayersFoundRepositoryException {
         //given
+
+
+        // Add RollDto objects to the list
+        Roll roll1= new Roll(1, 6, "WIN", new Date());
+        Roll roll2= new Roll(3, 0, "LOSS", new Date());
+
+        playerA.addRolls(roll1);
+        playerA.addRolls(roll2);
+
+        playerB.addRolls(roll1);
+        playerB.addRolls(roll2);
 
         playerRepository.save(playerA);
         playerRepository.save(playerB);
@@ -325,14 +330,20 @@ class DiceGameServiceImplemTest {
 
         List<PlayerDto> playerServiceListDto = playerServiceImp.getAllPlayersInTheGameWithOverage();
 
+        System.out.println(playerServiceListDto);
+
         //then
+
+        assertEquals(playerServiceListDto.get(0).getName(), "PLAYERA");
+        assertEquals(playerServiceListDto.size(), playersListDto.size());
+
+        assertThat(playerServiceListDto.get(0).getAverageSuccessRate()).isEqualTo("YOUR AVERAGE SUCCESS RATE IS 50.0%");// playerA
+        assertThat(playerServiceListDto.get(1).getAverageLoserRateNumber()).isEqualTo(50.0); // playerB
+        assertThat(playerServiceListDto.get(0).getAverageSuccessRateNumber()).isEqualTo(50.0); // PlayerA
 
         verify(playerRepository, times(1)).save(playerA);
         verify(playerRepository, times(1)).save(playerB);
         verify(playerRepository, times(1)).findAll();
-        assertEquals(playerServiceListDto.get(0).getName(), "PLAYERA");
-        assertEquals(playerServiceListDto.size(), playersListDto.size());
-        verify(playerRepository).findAll();
     }
 
     @Test
@@ -342,14 +353,20 @@ class DiceGameServiceImplemTest {
 
         ObjectId objectId = new ObjectId();
 
+        Roll roll1= new Roll(1, 6, "WIN", new Date());
+        Roll roll2= new Roll(3, 0, "LOSS", new Date());
+        List<Roll> rollsList = new ArrayList<>();
+        rollsList.add(roll1);
+        rollsList.add(roll2);
+
         Player expectedPlayer = Player.builder()
                 .id(objectId)
                 .name("Anderson")
                 .email("andersonEmail@gmail.com")
                 .password("password")
                 .localDateTime(LocalDateTime.now())
-                .rollsList(new ArrayList<>())
-                .role(role).build();
+                .rollsList(rollsList)
+                .build();
 
         when(playerRepository.findById(objectId)).thenReturn(Optional.of(expectedPlayer));
 
@@ -358,6 +375,9 @@ class DiceGameServiceImplemTest {
         Player actualPlayerEntity = playerServiceImp.convertPlayerDTOtoEntity(actualPlayerDto);
 
         // then
+        assertThat(actualPlayerDto.getAverageSuccessRate()).isEqualTo("YOUR AVERAGE SUCCESS RATE IS 50.0%");
+        assertThat(actualPlayerDto.getAverageLoserRateNumber()).isEqualTo(50.0); // playerA
+        assertThat(actualPlayerDto.getAverageSuccessRateNumber()).isEqualTo(50.0); // PlayerA
 
         assertEquals(expectedPlayer, actualPlayerEntity);
         verify(playerRepository).findById(objectId);
@@ -387,7 +407,7 @@ class DiceGameServiceImplemTest {
        playerServiceImp.averageSuccessRateGetONE(playerDto);
 
         // Assert the expected values
-        Assert.assertEquals("YOUR AVERAGE SUCCESS RATE IS 75.0 % PERCENTAGE", playerDto.getAverageSuccessRate());
+        Assert.assertEquals("YOUR AVERAGE SUCCESS RATE IS 75.0%", playerDto.getAverageSuccessRate());
         Assert.assertEquals( "25.0",  playerDto.getAverageLoserRateNumber().toString());
         Assert.assertEquals( "75.0",  playerDto.getAverageSuccessRateNumber().toString());
     }
@@ -422,6 +442,7 @@ class DiceGameServiceImplemTest {
 
 
     @Test
+
     void calculationOfSuccessAveragesOfAllPlayersforRankingDtoTest() {
         //getting
 
@@ -465,7 +486,7 @@ class DiceGameServiceImplemTest {
         RankingDto rankingDto= playerServiceImp.getPlayerWithTheWorstLossRate();
         // method to convert entity to Dto
 
-        PlayerDto worstLossRatePlayer = playerServiceImp.convertPlayerEntitytoDTO(playerA);
+        PlayerDto worstLossRatePlayer = playerServiceImp.convertPlayerEntitytoDTO(playerA);  // KNOWN THAT THE WORST LOSS RATE IS PLAYER A
         // Knowing that player A is the worst loser Rate number
         worstLossRatePlayer.setAverageSuccessRate("YOUR AVERAGE SUCCESS RATE IS 100.0%");
         worstLossRatePlayer.setAverageSuccessRateNumber(100.0);
@@ -540,7 +561,7 @@ class DiceGameServiceImplemTest {
                 .password("password")
                 .localDateTime(LocalDateTime.now())
                 .rollsList(new ArrayList<>())
-                .role(role).build();
+                .role(Role.USER).build();
 
         when(playerRepository.existsById(objectId)).thenReturn(true);
 
@@ -582,7 +603,7 @@ class DiceGameServiceImplemTest {
                 .password("password")
                 .localDateTime(LocalDateTime.now())
                 .rollsList(new ArrayList<>())
-                .role(role).build();
+                .role(Role.USER).build();
 
         when(playerRepository.findById(objectId)).thenReturn(Optional.of(expectedPlayer));
 

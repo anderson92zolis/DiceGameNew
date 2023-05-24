@@ -252,7 +252,7 @@ public class PlayerServiceImp implements PlayerInterfaceOfService, GamesInterfac
             double countSucess = rollsListDto.stream().filter(roll -> roll.getResult().equalsIgnoreCase("WIN")).count();
             double successRate = countSucess / rollsListDto.size() * 100;
             double loserRate = 100 - successRate;
-            playerDto.setAverageSuccessRate("YOUR AVERAGE SUCCESS RATE IS " + successRate + " % PERCENTAGE");
+            playerDto.setAverageSuccessRate("YOUR AVERAGE SUCCESS RATE IS " + successRate + "%");
             playerDto.setAverageLoserRateNumber(loserRate);
             playerDto.setAverageSuccessRateNumber(successRate);
         }
