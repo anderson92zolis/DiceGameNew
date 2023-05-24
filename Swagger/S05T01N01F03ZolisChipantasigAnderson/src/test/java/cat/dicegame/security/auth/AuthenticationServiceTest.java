@@ -10,13 +10,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -45,73 +44,88 @@ class AuthenticationServiceTest {
     @InjectMocks
     private AuthenticationService authenticationService;
 
-    private Player player;
-    private RegisterRequest regRequest;
+    private Player testPlayer1;
+    private Player testPlayer2;
+    private RegisterRequest registerRequest;
     private UsernamePasswordAuthenticationToken userPassAuthToken;
     private AuthenticationRequest authRequest;
 
 
     @BeforeEach
     public void setUp() {
-        // Create a Player object
-         player = Player.builder()
-                .name("A")
-                .email("a@gmail.com")
-                .password("password")
-                .role(Role.USER)
-                .build();
 
         // Create a RegisterRequest object
-        regRequest = RegisterRequest.builder()
-                .name("A")
-                .email("a@gmail.com")
-                .password("password")
+        registerRequest = RegisterRequest.builder()
+                .name("testPlayer1")
+                .email("testPlayer1@gmail.com")
+                .password("password1")
+                .build();
+
+        // Create a Player object
+        testPlayer1 = Player.builder()
+                .name(registerRequest.getName())
+                .email(registerRequest.getEmail())
+                .password(registerRequest.getPassword())
+                .role(Role.USER)
+                .localDateTime(LocalDateTime.now())
+                .rollsList(new ArrayList<>())
+                .build();
+
+        testPlayer2 = Player.builder()
+                .name("John")
+                .email("john@gmail.com")
+                .password("passwordJohn")
+                .role(Role.USER)
+                .localDateTime(LocalDateTime.now())
+                .rollsList(new ArrayList<>())
                 .build();
 
         // Create an UsernamePasswordAuthenticationToken object
-        userPassAuthToken = new UsernamePasswordAuthenticationToken(regRequest.getEmail(), regRequest.getPassword());
+        userPassAuthToken = new UsernamePasswordAuthenticationToken(registerRequest.getEmail(), registerRequest.getPassword());
 
         // Create an AuthenticationRequest object
-        authRequest = new AuthenticationRequest(regRequest.getEmail(),regRequest.getPassword());
+        authRequest = new AuthenticationRequest(registerRequest.getEmail(), registerRequest.getPassword());
     }
 
     @Test
-    @DisplayName("TEST CONVERT ENTITY TO DTO")
+    @DisplayName("TEST REGISTER A PLAYER")
     public void testRegister() {
         // given
 
         // Mock the behavior of the dependencies
         when(jwtService.generateToken(any())).thenReturn("jwtToken");
         // Mock the playerRepository.save() method
-        when(playerRepository.save(any())).thenReturn(player);
-        when(passwordEncoder.encode(any())).thenReturn(regRequest.getPassword());
+
+        when(playerRepository.save(any())).thenReturn(testPlayer1);
+        when(passwordEncoder.encode(any())).thenReturn(registerRequest.getPassword());
 
         //when
 
         // Call the register() method
-        AuthenticationResponse response = authenticationService.register(regRequest);
+        AuthenticationResponse response = authenticationService.register(registerRequest);
 
         // then
 
         assertNotNull(response);
         assertEquals("jwtToken", response.getToken());
 
-
         // Verify the expected behavior
         verify(playerRepository).save(any());
-        verify(passwordEncoder).encode("password");
+        verify(passwordEncoder).encode("password1");
         verify(playerRepository).save(any(Player.class));
     }
 
     @Test
+    @DisplayName("TEST AUTHENTICATE A PLAYER")
     public void authenticateTest() {
         //given
         // Mock the behavior of the dependencies
         when(jwtService.generateToken(any())).thenReturn("jwtToken");
         // Mock the playerRepository.findByEmail() method
-        when(playerRepository.findByEmail("a@gmail.com")).thenReturn(Optional.of(player));
+        when(playerRepository.findByEmail("testPlayer1@gmail.com")).thenReturn(Optional.of(testPlayer1));
         // Call the authenticate() method
         when(authenticationManager.authenticate(any())).thenReturn(userPassAuthToken);
+
         //when
         AuthenticationResponse response = authenticationService.authenticate(authRequest);
 
@@ -119,17 +133,19 @@ class AuthenticationServiceTest {
         // Verify the expected behavior
         assertNotNull(response);
         assertEquals("jwtToken", response.getToken());
-        verify(jwtService).generateToken(player);
-        verify(playerRepository).findByEmail("a@gmail.com");
+        verify(jwtService).generateToken(testPlayer1);
+        verify(playerRepository).findByEmail("testPlayer1@gmail.com");
     }
 
     @Test
+    @DisplayName("TEST VERIFY NAME OF A PLAYER")
     public void testVerifyPlayerName() {
         // Mock the playerRepository.findAll() method
         List<Player> playerList = new ArrayList<>();
-        Player player1 = new Player();
-        player1.setName("John");
-        playerList.add(player1);
+
+        playerList.add(testPlayer1);
+        playerList.add(testPlayer2);
+
         when(playerRepository.findAll()).thenReturn(playerList);
 
         // Call the verifyPlayerName() method
@@ -141,19 +157,22 @@ class AuthenticationServiceTest {
     }
 
     @Test
+    @DisplayName("TEST VERIFY EMAIL OF A PLAYER")
     public void testVerifyFindByEmail() {
+
         // Mock the playerRepository.findAll() method
+
         List<Player> playerList = new ArrayList<>();
-        Player player1 = new Player();
-        player1.setEmail("john@example.com");
-        playerList.add(player1);
+
+        playerList.add(testPlayer1);
+        playerList.add(testPlayer2);
+
         when(playerRepository.findAll()).thenReturn(playerList);
 
         // Call the verifyFindByEmail() method
-        boolean verified = authenticationService.verifyFindByEmail("john@example.com");
+        boolean verified = authenticationService.verifyFindByEmail("john@gmail.com");
 
         // Verify the expected behavior
         assertTrue(verified);
-
     }
 }
